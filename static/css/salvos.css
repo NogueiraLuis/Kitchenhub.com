@@ -1,0 +1,335 @@
+@import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 10, 0.8)),
+    url("/assets/tabua2.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  height: 100vh;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 60px;
+  max-width: 100%;
+}
+
+.titulo {
+  white-space: nowrap;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-container img {
+  height: 60px;
+}
+
+header {
+  background-color: none;
+  width: 100%;
+  min-height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 5%;
+  font-family: "Lobster", sans-serif;
+}
+
+.menu-toggle {
+  position: fixed;
+  top: 15px;
+  left: 20px;
+  z-index: 999;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 24px;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition-default);
+  font-family: Arial;
+}
+
+.menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 300px;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 100px 30px;
+  transition: var(--transition-default);
+  z-index: 1000;
+  font-family: Arial;
+}
+
+.side-menu.ativo {
+  left: 0;
+}
+
+.btn-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 35px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-links a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  font-size: 1.3rem;
+  padding: 15px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  background: var(--glass-bg);
+  transform: translateX(10px);
+}
+
+h1 {
+  color: #e0e0e0;
+  margin-right: 23%;
+  font-family: "Lobster", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+h2 {
+  color: #e0e0e0;
+  font-family: "Lobster", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+button {
+  color: #e0e0e0;
+  font-size: 90%;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: black;
+  font-family: "Lobster", sans-serif;
+  transition: all 0.1s ease;
+}
+
+.bt1:hover,
+.bt2:hover,
+.bt3:hover,
+.bt4:hover {
+  transform: translateY(2px);
+  background-color: gray;
+}
+
+nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  /* Removi o grid-template-rows fixo */
+  width: 100%;
+  font-size: 35px;
+  text-align: center;
+  height: auto; /* MUDAR DE 50px PARA AUTO: permite que o nav cresça se os botões quebrarem de linha */
+  gap: 10px;
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 30px;
+  padding: 15px 5px 15px;
+  max-width: 100%;
+  margin: 10px 20px; /* Reduzi um pouco a margem para alinhar melhor */
+  clear: both; /* Garante que ele não vai tentar subir para o espaço de nenhum elemento anterior */
+}
+
+.recipe-card {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  display: flex;
+  overflow: hidden;
+  gap: 15px;
+  align-items: stretch; /* Mude para stretch para alinhar a altura da imagem e do texto */
+  width: 100%;
+  min-height: 200px;    /* Define uma altura mínima estável para o card */
+  max-height: 600px;
+  padding: 24px;
+}
+
+.recipe-card:hover {
+  transform: scale(1.02);
+  transition: 0.2s;
+}
+
+.ver-receita-fav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  max-width: 100%;
+}
+
+.ver_receita {
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: black;
+  cursor: pointer;
+}
+
+.ver_receita:hover {
+  transform: scale(1.02);
+  transition: 0.2s;
+}
+
+.remover_receita {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.recipe-card__image {
+  flex: 0 0 40%;
+  height: 100%;
+  border-radius: 20px;
+}
+
+.recipe-card__image img {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+.recipe-card__info {
+  padding: 10px;
+  font-size: 1.1rem;
+  display: flex;         /* Trocar Grid por Flexbox aqui resolve o vazamento */
+  flex-direction: column;/* Empilha os elementos (Título, Info, Botões) */
+  justify-content: space-between; /* Distribui o espaço perfeitamente */
+  gap: 10px;            /* Cria um espaçamento seguro entre os textos */
+  width: 100%;
+}
+
+.bt1,
+.bt2,
+.bt3,
+.bt4 {
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.459);
+}
+
+/* --- RESPONSIVIDADE --- */
+
+/* Tablets (até 768px) */
+@media (max-width: 768px) {
+  header {
+    padding: 20px;
+    text-align: center;
+    font-size: 100%;
+  }
+
+  nav{
+    display: flex;
+    flex-direction: column;
+  }
+
+
+
+  h1 {
+    margin-right: 10px;
+    white-space: nowrap;
+  }
+
+  .recipe-card {
+    flex-direction: column; /* Faz a imagem ficar em cima e o texto embaixo */
+    align-items: center;
+  }
+
+  .recipe-card h1{
+    font-size: 160%;
+  }
+
+  .recipe-card__image {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 180px; /* Define uma altura fixa para a foto no mobile */
+  }
+
+
+}
+
+@media (max-width: 550px) {
+  .recipe-card {
+    flex-direction: column; /* Faz a imagem ficar em cima e o texto embaixo */
+    align-items: center;
+  }
+
+  .recipe-card__image {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 180px; /* Define uma altura fixa para a foto no mobile */
+  }
+}
+
+/* Celulares Pequenos (até 480px) */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 100%;
+  }
+
+  header {
+    flex-direction: row;
+  }
+
+  .recipe-card {
+    flex-direction: column; /* Faz a imagem ficar em cima e o texto embaixo */
+    align-items: center;
+  }
+
+  .recipe-card__image {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 180px; /* Define uma altura fixa para a foto no mobile */
+  }
+}

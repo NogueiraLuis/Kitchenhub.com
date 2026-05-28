@@ -1,0 +1,73 @@
+/* Container que posiciona os alertas no topo direito */
+.toast-container {
+  position: fixed !important;    /* Força a caixinha a flutuar por cima de tudo */
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 999999 !important;   /* Fica acima de qualquer grid, header ou main */
+  display: flex !important;
+  flex-direction: column;
+  gap: 10px;
+  
+  /* ESTAS TRÊS LINHAS VÃO MATAR O BUG DO PULO: */
+  pointer-events: none;          /* Não bloqueia cliques nos elementos de baixo */
+  width: auto !important;        /* O container não assume largura da página */
+  height: auto !important;       /* O container não assume altura da página */
+}
+
+/* Base da caixinha de aviso */
+.toast {
+  background-color: #1c2833;
+  color: #fff;
+  padding: 15px 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  font-family: sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 280px;
+  max-width: 400px;
+  
+  /* Permite que o usuário clique no toast se precisar */
+  pointer-events: auto; 
+  
+  /* Animação de entrada */
+  animation: slideIn 0.3s ease forwards;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Estilo quando for Sucesso */
+.toast.sucesso {
+  border-left: 5px solid #2ecc71;
+}
+
+/* Estilo quando for Erro/Aviso */
+.toast.erro {
+  border-left: 5px solid #e74c3c;
+}
+
+/* Ícones dentro do toast */
+.toast i {
+  font-size: 1.2rem;
+}
+.toast.sucesso i { color: #2ecc71; }
+.toast.erro i { color: #e74c3c; }
+
+/* Animações CSS */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast.saindo {
+  transform: translateX(100%);
+  opacity: 0;
+}

@@ -1,0 +1,102 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+main {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #152331;
+  background: -webkit-linear-gradient(to right, #000000, #152331);
+  background: linear-gradient(to right, #000000, #152331);
+}
+
+/* Ajuste nos containers para abrigar os forms */
+.login, #cadastro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 500px;
+  padding: 40px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(152, 152, 152, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  backdrop-filter: blur(30px);
+  border-radius: 30px;
+}
+
+/* O #cadastro começa escondido no HTML */
+#cadastro {
+  display: none; 
+}
+
+img {
+  width: 60%;
+  height: auto;
+  max-width: 300px;
+  object-fit: cover;
+  margin-bottom: 15px; /* Espaço embaixo da logo */
+}
+
+/* REGRA NOVA: Faz o formulário alinhar os inputs verticalmente */
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input {
+  width: 80%;
+  max-width: 350px;
+  border: none;
+  margin: 8px;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+input:focus {
+  outline: none;
+}
+
+span {
+  color: #e0e0e0;
+  margin-top: 8px;
+  align-self: center; /* Centraliza os textos do cadastro */
+}
+
+button {
+  margin-top: 15px; /* Aumentado levemente para desgrudar do último input */
+  width: 50%;
+  border-radius: 10px;
+  border: none;
+  padding: 10px; /* Aumentado o padding para o botão ficar mais robusto e bonito */
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #cecece;
+  transform: scale(1.01);
+}
+
+.cadastrar, #backtologin {
+  display: flex;
+  margin-top: 20px;
+  color: #e0e0e0;
+}
+
+.cadastrar a, #voltar-login {
+  text-decoration: none;
+  color: #ff7f50;
+  margin-left: 5px; /* Dá um espacinho do texto anterior */
+}
+
+.cadastrar a:hover, #voltar-login:hover {
+  color: red;
+  text-decoration: underline;
+}

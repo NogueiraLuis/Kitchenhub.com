@@ -1,0 +1,128 @@
+@import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Lobster", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+main {
+  display: flex;
+  height: 100vh;
+  background-color: white;
+  gap: 1px;
+  padding: 1px;
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+[class^="card-"] {
+  flex: 1; /* Todas começam com peso 1 (iguais) */
+  display: flex;
+  align-items: center; /* Centraliza o texto verticalmente */
+  justify-content: center; /* Centraliza o texto horizontalmente */
+  background-color: white;
+  border: 2px solid black;
+  transition:
+    flex 0.5s ease,
+    background-color 0.5s ease; /* Transição suave no flex */
+  overflow: hidden; /* Impede que o texto quebre o layout ao diminuir */
+  white-space: nowrap; /* Mantém o texto em uma linha só */
+}
+
+/* Quando passar o mouse em QUALQUER faixa */
+[class^="card-"]:hover {
+  flex: 3; /* Aumenta o peso desta faixa para 3 */
+  background-color: #f0f0f0;
+}
+
+.imagem1 {
+  object-fit: cover;
+  object-position: center;
+}
+
+#japonesa {
+  background-image: url("/assets/sushi.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(0px);
+  border: 3px solid;
+  transform: scale(1.1);
+  cursor: pointer;
+  font-family: "Lobster", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+#massa {
+  background-image: url("/assets/sectionmass.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(0px);
+  border: 3px solid;
+  transform: scale(1.1);
+  cursor: pointer;
+}
+#pizza {
+  background-image: url("/assets/freshly-baked-gourmet-pizza-rustic-wood-table-generated-by-ai.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(0px);
+  border: 3px solid;
+  transform: scale(1.1);
+  cursor: pointer;
+  transition: 1s;
+}
+#sobremesa {
+  background-image: url("/assets/pudim-de-leite.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(0px);
+  border: 3px solid;
+  transform: scale(1.1);
+  cursor: pointer;
+}
+span {
+  color: white;
+  font-size: 70px;
+  font-weight: 400;
+  transition: 2s;
+  -webkit-text-stroke-width: 2px; /* Espessura da borda */
+  -webkit-text-stroke-color: black; /* Cor da borda */
+}
+
+/* Media Querie para Celulares (telas até 768px) */
+@media (max-width: 768px) {
+  main {
+    flex-direction: column; /* Empilha as faixas verticalmente */
+    height: 100vh; /* Mantém a altura total da tela */
+  }
+
+  [class^="card-"] {
+    width: 100%; /* Garante que ocupem toda a largura */
+    flex: 1;
+    white-space: normal; /* Permite que o texto quebre linha se necessário */
+    text-align: center;
+  }
+
+  /* Ajuste do efeito de expansão para o toque (opcional) */
+  [class^="card-"]:hover,
+  [class^="card-"]:active {
+    flex: 2; /* No mobile, uma expansão de 3 pode ser exagerada, 2 fica mais elegante */
+  }
+
+  span {
+    font-size: 30px; /* Reduz o tamanho da fonte para não estourar no celular */
+    padding: 10px;
+  }
+}

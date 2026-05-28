@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="/static/css/toast.css" />
+
+    <link rel="stylesheet" href="/static/css/salvos.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon" />
+    <title>Livro de Receitas | KitchenHub</title>
+  </head>
+  <body>
+    <div id="toast-container" class="toast-container"></div>
+
+    <header>
+      <div class="logo-container">
+        <img src="/assets/logo.png" alt="Logo KitchenHub" />
+        <h1 class="brand-name">
+          KitchenHub<span id="nome-usuario-topo"></span>
+        </h1>
+      </div>
+
+      <div class="menu-wrapper">
+        <button
+          class="menu-toggle"
+          id="btn-menu"
+          aria-label="Abrir menu de navegação"
+        >
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <nav class="side-menu" id="menu-lateral" aria-label="Menu Principal">
+          <button class="btn-close" id="btn-fechar" aria-label="Fechar menu">
+            &times;
+          </button>
+          <ul class="nav-links">
+            <li><a href="sessoes.html">Sessões</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="index.html">Menu Principal</a></li>
+            <li>
+              <a href="salvos.html"
+                >Livro de Receitas
+                <i class="fa fa-bookmark" aria-hidden="true"></i
+              ></a>
+            </li>
+            <li>
+              <a href="#" onclick="fazerLogout()" style="color: #e74c3c"
+                >Sair <i class="fa-solid fa-right-from-bracket"></i
+              ></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <nav class="nav">
+        <button class="bt1" onclick="filtrarCategoria(3)">Japonesas</button>
+        <button class="bt2" onclick="filtrarCategoria(1)">Massas</button>
+        <button class="bt3" onclick="filtrarCategoria(4)">Pizzas</button>
+        <button class="bt4" onclick="filtrarCategoria(2)">Sobremesas</button>
+        <button
+          class="bt-todas"
+          onclick="filtrarCategoria('todas')"
+          style="background-color: #34495e; color: white"
+        >
+          Todas
+        </button>
+      </nav>
+
+      <section class="categorias recipe-grid" id="recipe-grid"></section>
+    </main>
+
+    <script src="/static/js/toast.js"></script>
+    <script src="/static/js/meu-livro.js"></script>
+    <script src="/static/js/menuhamb.js"></script>
+  </body>
+</html>

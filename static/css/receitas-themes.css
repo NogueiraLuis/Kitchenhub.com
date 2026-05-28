@@ -1,0 +1,465 @@
+@import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
+
+/* 2. Reset Moderno */
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Estilo Padrão */
+
+main {
+  transition: background 0.2s ease;
+}
+
+/* --- TEMA JAPONESA --- */
+
+#japonesa {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("/assets/sushibkg.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  min-height: 100vh;
+}
+#japonesa .section-title {
+  color: #e0e0e0;
+}
+
+#japonesa .recipe-card {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+#japonesa .nav-links a:hover {
+  background: rgba(255, 6, 6, 0.329);
+}
+
+#japonesa .salvar_receita {
+  background-color: rgba(171, 24, 24, 0.819);
+  color: #e0e0e0;
+}
+
+/* --- TEMA MASSAS --- */
+
+#massa {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("/assets/macarraobkg.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  min-height: 100vh;
+}
+#massa .section-title {
+  color: #f1b40cdb;
+}
+
+#massa .recipe-card {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+#massa .nav-links a:hover {
+  background: rgba(255, 147, 6, 0.329);
+}
+
+#massa .salvar_receita {
+  background-color: rgba(255, 118, 7, 0.819);
+  color: #e0e0e0;
+}
+
+/* --- TEMA PIZZAS --- */
+
+#pizza {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("/assets/freshly-baked-gourmet-pizza-rustic-wood-table-generated-by-ai.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  min-height: 100vh;
+}
+
+#pizza .recipe-card {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+#pizza .nav-links a:hover {
+  background: rgba(6, 255, 102, 0.329);
+}
+
+#pizza .section-title {
+  color: rgba(5, 204, 38, 0.783);
+}
+
+#pizza .salvar_receita {
+  background-color: rgba(8, 157, 35, 0.819);
+  color: #e0e0e0;
+}
+
+/* --- TEMA SOBREMESAS --- */
+#sobremesa {
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url("/assets/sobremesabkg.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  min-height: 100vh;
+}
+
+#sobremesa .recipe-card {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+#sobremesa .nav-links a:hover {
+  background: rgba(255, 6, 214, 0.329);
+}
+
+#sobremesa .section-title {
+  color: rgba(197, 5, 204, 0.783);
+}
+
+#sobremesa .salvar_receita {
+  background-color: rgba(171, 24, 144, 0.674);
+  color: #e0e0e0;
+}
+
+/* 1. Definição de Variáveis */
+:root {
+  --bg-nav-dark: rgba(19, 13, 20, 0.192);
+  --bg-color: #000000c4;
+  --card-bg: rgba(105, 41, 76, 0.6);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --text-white: #e0e0e0;
+  --effect: #b3acb1;
+  --transition-default: 0.4s cubic-bezier(0.77, 0.2, 0.05, 1);
+  --font-logo: "Lobster", sans-serif;
+  --font-main: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-white);
+  font-family: var(--font-main);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- HEADER --- */
+.main-header {
+  position: fixed;
+  z-index: 998;
+  height: 80px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 20px 0 80px;
+  background: var(--bg-nav-dark);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-container img {
+  height: 60px;
+}
+
+.brand-name {
+  font-family: var(--font-logo);
+  font-weight: 100;
+  font-size: 2rem;
+}
+
+/* --- MENU LATERAL (VIDRO) --- */
+.menu-toggle {
+  position: fixed;
+  top: 15px;
+  left: 20px;
+  z-index: 999;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 24px;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 300px;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 100px 30px;
+  transition: var(--transition-default);
+  z-index: 1000;
+}
+
+.side-menu.ativo {
+  left: 0;
+}
+
+.btn-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 35px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-links a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  font-size: 1.3rem;
+  padding: 15px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  background: var(--glass-bg);
+  transform: translateX(10px);
+}
+
+/* --- ÁREA DE BUSCA --- */
+.search-section {
+  padding: 60px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.section-title {
+  font-family: var(--font-logo);
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 100;
+}
+
+.search-container {
+  width: 100%;
+  max-width: 600px;
+}
+
+#search-recipe {
+  width: 100%;
+  height: 60px;
+  padding: 0 25px;
+  border-radius: 30px;
+  border: 2px solid transparent;
+  font-size: 1.2rem;
+  transition: 0.3s;
+  background-color: white;
+}
+
+#search-recipe:focus {
+  outline: none;
+  border-color: var(--effect);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+/* --- GRID DE RECEITAS --- */
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 30px;
+  padding: 0 30px 50px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.recipe-card {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  display: flex;
+  overflow: hidden;
+  gap: 15px;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  padding: 24px;
+}
+
+.recipe-card:hover {
+  transform: scale(1.02);
+  transition: 0.2s;
+}
+
+.ver-receita-fav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.salvar_receita {
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #000000;
+  background-color: rgb(255, 255, 255);
+  cursor: pointer;
+}
+
+.salvar_receita:hover {
+  transform: scale(1.02);
+  transition: 0.2s;
+}
+
+.ver_receita {
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: black;
+  cursor: pointer;
+}
+
+.ver_receita:hover {
+  transform: scale(1.02);
+  transition: 0.2s;
+}
+
+.recipe-card__image {
+  flex: 0 0 40%;
+  height: 100%;
+  border-radius: 20px;
+}
+
+.recipe-card__image img {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+.recipe-card__info {
+  padding: 10px;
+  gap: 50px;
+  font-size: 1.1rem;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  align-items: center;
+  line-height: 1.5;
+}
+
+/* Fundo escuro que cobre a tela toda */
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Caixa branca do alerta */
+.modal-conteudo {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.modal-conteudo h2 {
+  margin: 15px 0 10px;
+  color: #333;
+}
+
+.modal-conteudo p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Botões do alerta */
+.modal-botoes {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.modal-botoes button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-cancelar {
+  background-color: #bdc3c7;
+  color: #333;
+}
+
+.btn-confirmar {
+  background-color: #2ecc71;
+  color: white;
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+  .recipe-grid {
+    grid-template-columns: 1fr;
+    padding: 0 15px 30px;
+  }
+
+  .recipe-card {
+    flex-direction: column; /* Faz a imagem ficar em cima e o texto embaixo */
+    align-items: center;
+  }
+
+  .recipe-card h1 {
+    font-size: 160%;
+  }
+
+  .recipe-card__image {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 180px; /* Define uma altura fixa para a foto no mobile */
+  }
+
+  .main-header {
+    padding-left: 70px;
+  }
+}
