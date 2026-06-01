@@ -13,8 +13,14 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 # ---- CONFIGURAÇÃO ----
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///receitas.db")
-# Railway injeta a variável PORT; padrão local = 8000
 PORT = int(os.getenv("PORT", 8000))
+
+# URL do Ollama hospedado no HuggingFace Spaces
+# SUBSTITUA com sua URL do Space!
+OLLAMA_URL = os.getenv(
+    "OLLAMA_URL",
+    "https://-ollama-api.hf.space"  # MUDE ISTO para sua URL
+)
 
 engine = create_engine(DATABASE_URL)
 
@@ -24,7 +30,7 @@ engine = create_engine(DATABASE_URL)
 class Usuario(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     email: str = Field(unique=True)
-    senha: str  # TODO: usar bcrypt em produção
+    senha: str
 
 
 class ReceitaFavorita(SQLModel, table=True):
@@ -33,7 +39,7 @@ class ReceitaFavorita(SQLModel, table=True):
     titulo: str
     imagem: str
     serve: int = 0
-    tempo: int = 0  # 1=massa 2=sobremesa 3=japonesa 4=pizza
+    tempo: int = 0
     usuario_id: int
 
 
@@ -47,7 +53,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# CORS: em produção, substitua "*" pelo domínio do Railway gerado para você
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -212,3 +217,148 @@ def remover_favorito(id_banco: int):
         session.delete(receita)
         session.commit()
         return {"mensagem": "Receita removida com sucesso"}
+
+
+# ---- ROTAS OLLAMA (IA via HuggingFace Spaces) ----
+
+@app.post("/api/chat")
+async def chat(data: dict):
+    """
+    Chat com Ollama hospedado no HuggingFace Spaces
+    Acessa via API HTTPS
+    """
+    try:
+        texto = data.get("texto", "")
+        
+        if not texto:
+            return {"sucesso": False, "erro": "Texto vazio"}
+        
+        async with httpx.AsyncClient(timeout=120) as client:
+            response = await client.post(
+                f"{OLLAMA_URL}/api/generate",
+                json={
+                    "model": "llama3.2:3b",
+                    "prompt": texto,
+                    "stream": False
+                }
+            )
+        
+        if response.status_code == 200:
+            result = response.json()
+            return {
+                "sucesso": True,
+                "resposta": result.get("response", "Sem resposta")
+            }
+        else:
+            return {
+                "sucesso": False,
+                "erro": f"Erro do servidor Ollama: {response.status_code}"
+            }
+    
+    except httpx.TimeoutException:
+        return {
+            "sucesso": False,
+            "erro": "Timeout - Ollama está pensando (pode levar até 2 min)"
+        }
+    except Exception as e:
+        print(f"Erro no chat: {e}")
+        return {
+            "sucesso": False,
+            "erro": f"Erro: {str(e)}"
+        }
+
+
+@app.get("/api/health-ollama")
+async def health_ollama():
+    """
+    Verifica se Ollama está online no HuggingFace Spaces
+    """
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            response = await client.get(f"{OLLAMA_URL}/api/tags")
+        
+        if response.status_code == 200:
+            data = response.json()
+            models = [m["name"] for m in data.get("models", [])] if data else []
+            return {
+                "status": "ok",
+                "ollama": "disponível online",
+                "url": OLLAMA_URL,
+                "modelos": models
+            }
+        else:
+            return {
+                "status": "erro",
+                "mensagem": f"Ollama respondeu com erro {response.status_code}"
+            }
+    
+    except httpx.ConnectError:
+        return {
+            "status": "erro",
+            "mensagem": "Não conseguiu conectar ao Ollama. URL configurada corretamente?"
+        }
+    except Exception as e:
+        return {
+            "status": "erro",
+            "mensagem": f"Ollama offline: {str(e)}"
+        }
+
+
+@app.get("/api/gerar-receita-ia/{ingredientes}")
+async def gerar_receita_ia(ingredientes: str):
+    """
+    Gera uma receita usando Ollama hospedado no HuggingFace Spaces
+    Acessa via API HTTPS
+    """
+    try:
+        prompt = f"""Crie uma receita DETALHADA com: {ingredientes}
+
+Inclua obrigatoriamente:
+1. Nome da receita
+2. Lista completa de ingredientes com quantidades
+3. Modo de preparo (passo a passo numerado)
+4. Tempo de preparo
+5. Dificuldade (fácil/médio/difícil)
+6. Rendimento
+
+Responda SEMPRE em português do Brasil."""
+
+        async with httpx.AsyncClient(timeout=180) as client:
+            response = await client.post(
+                f"{OLLAMA_URL}/api/generate",
+                json={
+                    "model": "llama3.2:3b",
+                    "prompt": prompt,
+                    "stream": False
+                }
+            )
+        
+        if response.status_code == 200:
+            result = response.json()
+            return {
+                "sucesso": True,
+                "receita": result.get("response", "Erro ao gerar"),
+                "modelo": "llama3.2:3b"
+            }
+        else:
+            return {
+                "sucesso": False,
+                "erro": f"Erro do servidor: {response.status_code}"
+            }
+    
+    except httpx.TimeoutException:
+        return {
+            "sucesso": False,
+            "erro": "Timeout - Ollama está pensando (pode levar até 3 minutos). Tente novamente!"
+        }
+    except httpx.ConnectError:
+        return {
+            "sucesso": False,
+            "erro": "Não conseguiu conectar ao servidor de IA. Tente novamente em alguns segundos."
+        }
+    except Exception as e:
+        print(f"Erro ao gerar receita: {e}")
+        return {
+            "sucesso": False,
+            "erro": f"Erro ao gerar receita: {str(e)}"
+        }

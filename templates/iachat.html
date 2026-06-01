@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Chat de Receitas</title>
+    <link rel="stylesheet" href="/static/css/iachat.css" />
+  </head>
+  <body>
+    <header>
+      <h2>ChefIA 👩‍🍳</h2>
+    </header>
+
+    <main>
+      <div class="chat-messages" id="chat-messages">
+        <div class="mensagem bot">
+          Olá! Como posso te ajudar na sua receita hoje? 👩‍🍳
+        </div>
+      </div>
+
+      <section>
+        <input id="msg" class="entrada" placeholder="Digite sua pergunta" />
+        <button class="botao" onclick="enviar()">Enviar</button>
+      </section>
+    </main>
+
+    <script>
+      const chat = document.getElementById("chat-messages");
+
+      const input = document.getElementById("msg");
+
+      /* ENTER para enviar */
+      input.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          enviar();
+        }
+      });
+
+      function adicionarMensagem(texto, tipo) {
+        const msg = document.createElement("div");
+
+        msg.classList.add("mensagem");
+
+        msg.classList.add(tipo);
+
+        msg.innerText = texto;
+
+        chat.appendChild(msg);
+
+        chat.scrollTop = chat.scrollHeight;
+      }
+
+      async function enviar() {
+        const texto = input.value;
+
+        if (texto.trim() === "") {
+          return;
+        }
+
+        /* mensagem do usuário */
+        adicionarMensagem(texto, "usuario");
+
+        input.value = "";
+
+        /* mensagem temporária */
+        const pensando = document.createElement("div");
+
+        pensando.classList.add("mensagem");
+
+        pensando.classList.add("bot");
+
+        pensando.innerText = "🍳 Pensando...";
+
+        chat.appendChild(pensando);
+
+        try {
+          // Usando apenas "/chat", o navegador descobre a porta sozinho!
+          const res = await fetch("http://127.0.0.1:8000/chat", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              texto: texto,
+            }),
+          });
+
+          const data = await res.json();
+
+          pensando.innerText = data.resposta;
+        } catch (erro) {
+          pensando.innerText = "Erro ao conectar.";
+
+          console.log(erro);
+        }
+      }
+    </script>
+  </body>
+</html>
