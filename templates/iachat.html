@@ -62,15 +62,19 @@
 
         try {
           // Comunica com o seu FastAPI local, que por sua vez usa o Token e chama o Hugging Face
-          const res = await fetch("http://127.0.0.1:8000/api/chat", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
+          // Troque pelo seu link real do Railway!
+          const res = await fetch(
+            "https://SUA-URL-DO-RAILWAY.up.railway.app/api/chat",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                texto: texto,
+              }),
             },
-            body: JSON.stringify({
-              texto: texto,
-            }),
-          });
+          );
 
           const data = await res.json();
 
@@ -83,7 +87,7 @@
           pensando.innerText = "Erro ao conectar ao servidor local.";
           console.log(erro);
         }
-        
+
         chat.scrollTop = chat.scrollHeight;
       }
     </script>
