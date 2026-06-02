@@ -19,7 +19,7 @@ PORT = int(os.getenv("PORT", 8000))
 # SUBSTITUA com sua URL do Space!
 OLLAMA_URL = os.getenv(
     "OLLAMA_URL",
-    "https://-ollama-api.hf.space"  # MUDE ISTO para sua URL
+    "https://vxzs-ollama-api.hf.space"  # MUDE ISTO para sua URL
 )
 
 engine = create_engine(DATABASE_URL)
