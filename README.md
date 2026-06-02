@@ -1,14 +1,12 @@
 ---
-title: Ollama Api
-emoji: 👁
-colorFrom: yellow
-colorTo: yellow
+title: Ollama API
+emoji: 🦙
+colorFrom: blue
+colorTo: purple
 sdk: docker
+app_port: 7860
 pinned: false
-license: mit
 ---
-
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
 
 # Ollama API
 
