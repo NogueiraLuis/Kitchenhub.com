@@ -65,12 +65,18 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+origins = [
+    "https://kitchenhubcom-production.up.railway.app",  # Seu front-end no Railway
+    "http://localhost",                                 # Caso queira testar local
+    "http://127.0.0.1:8000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["GET", "POST", "DELETE"],
-    allow_credentials=False,
-    allow_headers=["Content-Type"],
+    allow_origins=origins,            # Troca o "*" pela lista específica
+    allow_credentials=True,           # Altere para True para o navegador aceitar cookies/sessões se precisar
+    allow_methods=["*"],              # Libera todos os métodos (GET, POST, OPTIONS, DELETE, etc)
+    allow_headers=["*"],              # Libera todos os cabeçalhos comuns
 )
 
 # Arquivos estáticos e assets
