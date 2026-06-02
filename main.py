@@ -10,17 +10,29 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
+from dotenv import load_dotenv
+load_dotenv()  # Carrega as variáveis do arquivo .env
+
 # ---- CONFIGURAÇÃO ----
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///receitas.db")
 PORT = int(os.getenv("PORT", 8000))
 
 # URL do Ollama hospedado no HuggingFace Spaces
-# SUBSTITUA com sua URL do Space!
 OLLAMA_URL = os.getenv(
     "OLLAMA_URL",
-    "https://vxzs-ollama-api.hf.space"  # MUDE ISTO para sua URL
+    "https://vxzs-ollama-api.hf.space"
 )
+
+# Token do Hugging Face para autorizar as requisições à API privada/pública do Space
+# O token NÃO deve ficar hardcoded aqui para evitar bloqueio do GitHub
+HF_TOKEN = os.getenv("HF_TOKEN", "coloque_seu_token_aqui_ou_na_env")
+
+# Cabeçalhos padrão para comunicação segura com o Space
+OLLAMA_HEADERS = {
+    "Authorization": f"Bearer {HF_TOKEN}",
+    "Content-Type": "application/json"
+}
 
 engine = create_engine(DATABASE_URL)
 
@@ -225,7 +237,7 @@ def remover_favorito(id_banco: int):
 async def chat(data: dict):
     """
     Chat com Ollama hospedado no HuggingFace Spaces
-    Acessa via API HTTPS
+    Acessa via API HTTPS passando o token de autorização
     """
     try:
         texto = data.get("texto", "")
@@ -236,6 +248,7 @@ async def chat(data: dict):
         async with httpx.AsyncClient(timeout=120) as client:
             response = await client.post(
                 f"{OLLAMA_URL}/api/generate",
+                headers=OLLAMA_HEADERS,
                 json={
                     "model": "llama3.2:3b",
                     "prompt": texto,
@@ -271,11 +284,11 @@ async def chat(data: dict):
 @app.get("/api/health-ollama")
 async def health_ollama():
     """
-    Verifica se Ollama está online no HuggingFace Spaces
+    Verifica se Ollama está online no HuggingFace Spaces passando o token
     """
     try:
         async with httpx.AsyncClient(timeout=10) as client:
-            response = await client.get(f"{OLLAMA_URL}/api/tags")
+            response = await client.get(f"{OLLAMA_URL}/api/tags", headers=OLLAMA_HEADERS)
         
         if response.status_code == 200:
             data = response.json()
@@ -307,8 +320,7 @@ async def health_ollama():
 @app.get("/api/gerar-receita-ia/{ingredientes}")
 async def gerar_receita_ia(ingredientes: str):
     """
-    Gera uma receita usando Ollama hospedado no HuggingFace Spaces
-    Acessa via API HTTPS
+    Gera uma receita usando Ollama hospedado no HuggingFace Spaces passando o token
     """
     try:
         prompt = f"""Crie uma receita DETALHADA com: {ingredientes}
@@ -326,6 +338,7 @@ Responda SEMPRE em português do Brasil."""
         async with httpx.AsyncClient(timeout=180) as client:
             response = await client.post(
                 f"{OLLAMA_URL}/api/generate",
+                headers=OLLAMA_HEADERS,
                 json={
                     "model": "llama3.2:3b",
                     "prompt": prompt,

@@ -24,7 +24,6 @@
 
     <script>
       const chat = document.getElementById("chat-messages");
-
       const input = document.getElementById("msg");
 
       /* ENTER para enviar */
@@ -36,15 +35,10 @@
 
       function adicionarMensagem(texto, tipo) {
         const msg = document.createElement("div");
-
         msg.classList.add("mensagem");
-
         msg.classList.add(tipo);
-
         msg.innerText = texto;
-
         chat.appendChild(msg);
-
         chat.scrollTop = chat.scrollHeight;
       }
 
@@ -57,29 +51,22 @@
 
         /* mensagem do usuário */
         adicionarMensagem(texto, "usuario");
-
         input.value = "";
 
-        /* mensagem temporária */
+        /* mensagem temporária do bot enquanto carrega */
         const pensando = document.createElement("div");
-
-        pensando.classList.add("mensagem");
-
-        pensando.classList.add("bot");
-
+        pensando.classList.add("mensagem", "bot");
         pensando.innerText = "🍳 Pensando...";
-
         chat.appendChild(pensando);
+        chat.scrollTop = chat.scrollHeight;
 
         try {
-          // Usando apenas "/chat", o navegador descobre a porta sozinho!
-          const res = await fetch("http://127.0.0.1:8000/chat", {
+          // Comunica com o seu FastAPI local, que por sua vez usa o Token e chama o Hugging Face
+          const res = await fetch("http://127.0.0.1:8000/api/chat", {
             method: "POST",
-
             headers: {
               "Content-Type": "application/json",
             },
-
             body: JSON.stringify({
               texto: texto,
             }),
@@ -87,12 +74,17 @@
 
           const data = await res.json();
 
-          pensando.innerText = data.resposta;
+          if (data.sucesso) {
+            pensando.innerText = data.resposta;
+          } else {
+            pensando.innerText = "Erro: " + data.erro;
+          }
         } catch (erro) {
-          pensando.innerText = "Erro ao conectar.";
-
+          pensando.innerText = "Erro ao conectar ao servidor local.";
           console.log(erro);
         }
+        
+        chat.scrollTop = chat.scrollHeight;
       }
     </script>
   </body>
