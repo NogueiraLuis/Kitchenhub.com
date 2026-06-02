@@ -66,7 +66,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 origins = [
-    "kitchenhubcom-production.up.railway.app",  # Seu front-end no Railway
+    "https://kitchenhubcom-production.up.railway.app/api/chat",  # Seu front-end no Railway
     "http://localhost",                                 # Caso queira testar local
     "http://127.0.0.1:8000",
 ]
