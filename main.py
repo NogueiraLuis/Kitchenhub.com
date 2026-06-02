@@ -241,17 +241,15 @@ def remover_favorito(id_banco: int):
 
 @app.post("/api/chat")
 async def chat(data: dict):
-    """
-    Chat com Ollama hospedado no HuggingFace Spaces
-    Acessa via API HTTPS passando o token de autorização
-    """
     try:
         texto = data.get("texto", "")
-        
         if not texto:
             return {"sucesso": False, "erro": "Texto vazio"}
         
-        async with httpx.AsyncClient(timeout=120) as client:
+        # Configura o httpx para esperar até 40 segundos só para conectar com o Hugging Face
+        timeout_config = httpx.Timeout(180.0, connect=40.0)
+        
+        async with httpx.AsyncClient(timeout=timeout_config) as client:
             response = await client.post(
                 f"{OLLAMA_URL}/api/generate",
                 headers=OLLAMA_HEADERS,
@@ -269,22 +267,13 @@ async def chat(data: dict):
                 "resposta": result.get("response", "Sem resposta")
             }
         else:
-            return {
-                "sucesso": False,
-                "erro": f"Erro do servidor Ollama: {response.status_code}"
-            }
-    
+            return {"sucesso": False, "erro": f"Erro do servidor Ollama: {response.status_code}"}
+            
     except httpx.TimeoutException:
-        return {
-            "sucesso": False,
-            "erro": "Timeout - Ollama está pensando (pode levar até 2 min)"
-        }
+        return {"sucesso": False, "erro": "A IA demorou para responder. Tente enviar sua mensagem novamente em instantes!"}
     except Exception as e:
         print(f"Erro no chat: {e}")
-        return {
-            "sucesso": False,
-            "erro": f"Erro: {str(e)}"
-        }
+        return {"sucesso": False, "erro": f"Erro: {str(e)}"}
 
 
 @app.get("/api/health-ollama")

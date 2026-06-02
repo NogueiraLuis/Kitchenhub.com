@@ -26,6 +26,19 @@
       const chat = document.getElementById("chat-messages");
       const input = document.getElementById("msg");
 
+      // --- Acorda a IA assim que a página entra na tela ---
+      window.onload = async function () {
+        console.log("Acordando o servidor de IA em segundo plano...");
+        try {
+          await fetch(
+            "https://kitchenhubcom-production.up.railway.app/api/health-ollama",
+          );
+          console.log("Servidor de IA alertado com sucesso.");
+        } catch (e) {
+          console.log("Erro ao tentar acordar a IA em segundo plano:", e);
+        }
+      };
+
       /* ENTER para enviar */
       input.addEventListener("keypress", function (event) {
         if (event.key === "Enter") {
@@ -35,8 +48,7 @@
 
       function adicionarMensagem(texto, tipo) {
         const msg = document.createElement("div");
-        msg.classList.add("mensagem");
-        msg.classList.add(tipo);
+        msg.classList.add("mensagem", tipo);
         msg.innerText = texto;
         chat.appendChild(msg);
         chat.scrollTop = chat.scrollHeight;
@@ -49,20 +61,20 @@
           return;
         }
 
-        /* mensagem do usuário */
+        /* 1. Adiciona a mensagem do usuário na tela */
         adicionarMensagem(texto, "usuario");
         input.value = "";
 
-        /* mensagem temporária do bot enquanto carrega */
+        /* 2. Cria e adiciona a mensagem temporária de carregamento do bot */
         const pensando = document.createElement("div");
         pensando.classList.add("mensagem", "bot");
-        pensando.innerText = "🍳 Pensando...";
+        pensando.innerText =
+          "🍳 Pensando... (Se for a primeira mensagem, o Chef pode demorar até 1 minutinho para aquecer o fogão)";
         chat.appendChild(pensando);
         chat.scrollTop = chat.scrollHeight;
 
         try {
-          // Comunica com o seu FastAPI local, que por sua vez usa o Token e chama o Hugging Face
-          // Troque pelo seu link real do Railway!
+          /* 3. Faz a requisição para o seu back-end no Railway */
           const res = await fetch(
             "https://kitchenhubcom-production.up.railway.app/api/chat",
             {
@@ -78,16 +90,23 @@
 
           const data = await res.json();
 
+          /* 4. Trata a resposta substituindo o texto do elemento "pensando" */
           if (data.sucesso) {
-            pensando.innerText = data.resposta;
+            // Substitui as quebras de linha por <br> e os asteriscos ** por <strong>
+            let textoFormatado = data.resposta
+              .replace(/\n/g, "<br>")
+              .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"); // Corrigido aqui!
+            pensando.innerHTML = textoFormatado;
           } else {
             pensando.innerText = "Erro: " + data.erro;
           }
         } catch (erro) {
-          pensando.innerText = "Erro ao conectar ao servidor local.";
+          pensando.innerText =
+            "Erro ao conectar ao servidor. Tente novamente em instantes!";
           console.log(erro);
         }
 
+        /* 5. Garante que o scroll desça após a resposta chegar */
         chat.scrollTop = chat.scrollHeight;
       }
     </script>
