@@ -1,6 +1,6 @@
 const API_BASE = "";
 
-if (!localStorage.getItem("usuario_id")) {
+if (!localStorage.getItem("usuarioLogado")) {
     window.location.href = "login.html";
 }
 
