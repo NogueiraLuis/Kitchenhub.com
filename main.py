@@ -232,13 +232,16 @@ async def chat(data: dict):
             return {"sucesso": False, "erro": "Texto vazio"}
         
         # PROMPT ULTRA RÍGIDO: Mostra pro TinyLlama exatamente o formato que ele deve responder
-        prompt_sistema = """[INST] Você é o KitchenHub, um chef de cozinha assistente virtual.
-        Você NÃO conversa sobre outros assuntos. Você APENAS responde sobre receitas e culinária.
-        Sempre responda em português do Brasil de forma curta.
-
-        Exemplo de boa resposta:
-        "Olá! Sou o assistente do KitchenHub. Digite os ingredientes que você tem na geladeira e eu te ajudo a criar uma receita deliciosa!"
-        [/INST]"""
+        # PROMPT DIRETO: Sem exemplos para o TinyLlama não copiar o texto errado
+        prompt_sistema = """Você é o KitchenHub, um chef de cozinha assistente virtual.
+        Você NUNCA fala sobre outros assuntos. Você APENAS responde sobre receitas e culinária.
+        Responda sempre em português do Brasil, de forma curta, educada e direta.
+        Não adicione marcações como [INST] ou Pergunta na sua resposta. Além disso, NUNCA repita o que o usuário disse. Responda apenas a resposta, sem introdução ou conclusão.
+        Se o usuário fizer uma pergunta que não seja sobre culinária, responda: "Desculpe, só posso ajudar com receitas e culinária. Como posso te ajudar com suas receitas hoje?".
+        Se o usuário pedir uma receita, responda apenas a receita, sem introdução ou conclusão. Seja direto e objetivo.
+        Se o usuário fizer uma pergunta sobre culinária, responda de forma clara e direta, sem rodeios. Seja objetivo e educado.
+        Se o usuário fizer uma pergunta vaga, responda pedindo mais detalhes, mas sem usar palavras como "Pergunta" ou "Usuário". Seja direto e educado.
+        """
         
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.post(
@@ -316,8 +319,8 @@ async def gerar_receita_ia(ingredientes: str):
     """
     try:
         # Prompt ultra engessado com as tags [INST] que o TinyLlama obedece
-        prompt = f"""[INST] Você é um chef de cozinha brasileiro. Crie uma receita simples usando obrigatoriamente estes ingredientes: {ingredientes}.
-        Você deve responder APENAS no formato do exemplo abaixo, em português do Brasil. Não adicione saudações ou textos extras.
+        prompt = f"""[INST] Você é um chef de cozinha brasileiro. Você deve criar uma receita simples usando obrigatoriamente estes ingredientes: {ingredientes}.
+        Você deve responder APENAS no formato do exemplo abaixo, em português do Brasil. Não adicione saudações ou textos extras. Além disso, NUNCA repita os ingredientes ou o que o usuário disse. Responda apenas a receita, sem introdução ou conclusão. Seja direto e objetivo. Se o usuário pedir uma receita que não seja possível com os ingredientes fornecidos, responda apenas "Não foi possível criar uma receita com esses ingredientes. Tente outros ingredientes.". Também, se o usuário pedir uma receita que seja muito complexa para os ingredientes fornecidos, responda apenas "Com esses ingredientes, só consigo criar receitas bem simples. Tente adicionar mais ingredientes para algo mais elaborado.". Se o usuário pedir uma receita que seja possível, responda seguindo estritamente o formato abaixo, sem variações. Use os ingredientes fornecidos, mas sinta-se livre para ajustar as quantidades e adicionar temperos básicos como sal, pimenta e óleo. O tempo de preparo deve ser estimado com base na complexidade da receita, mas tente manter as receitas simples e rápidas. Seja criativo dentro dessas limitações! Se o usuário não tiver o ingrediente, dê outra opção de receita usando os ingredientes disponíveis. Lembre-se: responda APENAS no formato do exemplo, sem variações, sem introdução e sem conclusão. Seja direto e objetivo.
 
         Exemplo de formato exigido:
         Nome: Omelete Rápido
