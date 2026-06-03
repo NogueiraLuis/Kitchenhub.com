@@ -18,9 +18,16 @@ body {
 
 /* topo */
 header {
-  padding: 20px;
-  border-bottom: 1px solid #3a3a3a;
-  background-color: rgba(0, 0, 0, 0.3); /* Dá um leve destaque ao topo */
+ display: flex;
+  width: 100%;
+  gap: 20px;
+  align-items: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
 h2 {
@@ -86,6 +93,81 @@ section {
   border-top: 1px solid #3a3a3a;
   background-color: rgba(20, 20, 20, 0.8); /* Fundo sutil para a área de digitação */
   width: 100%;
+}
+
+/* --- MENU LATERAL (VIDRO) --- */
+.menu-toggle {
+  position: fixed;
+  top: 15px;
+  left: 20px;
+  z-index: 999;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 24px;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.menu-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 300px;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 100px 30px;
+  transition: var(--transition-default);
+  z-index: 1000;
+}
+
+.side-menu.ativo {
+  left: 0;
+}
+
+.btn-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 35px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-links a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  font-size: 1.3rem;
+  padding: 15px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  background: var(--glass-bg);
+  transform: translateX(10px);
 }
 
 /* Caixa que segura o input e o botão (Otimizado para a largura máxima do chat) */

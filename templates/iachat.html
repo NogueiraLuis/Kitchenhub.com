@@ -15,66 +15,52 @@
   <body>
     <div id="toast-container" class="toast-container"></div>
 
-    <header>
-      <div class="logo-container">
-        <img
-          src="/assets/logo.png"
-          alt="Logo KitchenHub"
-          style="height: 40px; margin-right: 10px"
-        />
-        <h1
-          class="brand-name"
-          style="
-            color: white;
-            font-size: 24px;
-            display: inline-block;
-            vertical-align: middle;
-          "
-        >
-          KitchenHub
-          <span style="font-size: 16px; color: #ff7f50">(Chef IA)</span>
-        </h1>
-      </div>
 
-      <div
-        class="menu-wrapper"
-        style="position: absolute; right: 20px; top: 20px"
-      >
-        <button
-          class="menu-toggle"
-          id="btn-menu"
-          aria-label="Abrir menu de navegação"
-          style="background: none; width: auto; height: auto"
-        >
-          <i class="fa-solid fa-bars" style="color: white; font-size: 24px"></i>
-        </button>
-
-        <nav class="side-menu" id="menu-lateral" aria-label="Menu Principal">
-          <button class="btn-close" id="btn-fechar" aria-label="Fechar menu">
-            &times;
-          </button>
-          <ul class="nav-links">
-            <li><a href="sessoes.html">Sessões</a></li>
-            <li><a href="login.html">Login</a></li>
-            <li><a href="index.html">Menu Principal</a></li>
-            <li><a href="iachat.html">ChefIA</a></li>
-            <li>
-              <a href="salvos.html"
-                >Livro de Receitas
-                <i class="fa fa-bookmark" aria-hidden="true"></i
-              ></a>
-            </li>
-            <li>
-              <a href="#" onclick="fazerLogout()" style="color: #e74c3c"
-                >Sair <i class="fa-solid fa-right-from-bracket"></i
-              ></a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
 
     <main>
+      <nav id="header" class="main-header">
+        <div class="logo-container">
+          <img src="/assets/logo.png" alt="Logo KitchenHub" />
+          <h1 class="brand-name">
+            KitchenHub<span id="nome-usuario-topo"></span>
+          </h1>
+        </div>
+
+        <div class="menu-wrapper">
+          <button
+            class="menu-toggle"
+            id="btn-menu"
+            aria-label="Abrir menu de navegação"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <nav class="side-menu" id="menu-lateral" aria-label="Menu Principal">
+            <button class="btn-close" id="btn-fechar" aria-label="Fechar menu">
+              &times;
+            </button>
+            <ul class="nav-links">
+              <li><a href="sessoes.html">Sessões</a></li>
+              <li><a href="login.html">Login</a></li>
+              <li><a href="index.html">Menu Principal</a></li>
+              <li><a href="iachat.html">ChefIA</a> 
+              </li>
+              <li>
+                <a href="salvos.html"
+                  >Livro de Receitas
+                  <i class="fa fa-bookmark" aria-hidden="true"></i
+                ></a>
+              </li>
+              <li>
+                <a href="#" onclick="fazerLogout()" style="color: #e74c3c"
+                  >Sair <i class="fa-solid fa-right-from-bracket"></i
+                ></a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </nav>
+
       <div class="chat-messages" id="chat-messages">
         <div class="mensagem bot">
           Olá! Sou o assistente do KitchenHub. Como posso te ajudar na sua
@@ -95,9 +81,7 @@
       const chat = document.getElementById("chat-messages");
       const input = document.getElementById("msg");
 
-      if (!localStorage.getItem("usuario_id")) {
-        window.location.href = "login.html";
-      }
+      
 
       // --- Acorda a IA assim que a página entra na tela ---
       window.onload = async function () {
