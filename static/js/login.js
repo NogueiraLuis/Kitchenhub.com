@@ -31,7 +31,7 @@ document.querySelector("#form-cadastro").addEventListener("submit", async (e) =>
     const dados = await res.json();
     if (res.ok) {
       mostrarToast("Conta criada com sucesso!", "sucesso");
-      localStorage.setItem("usuarioLogado", dados.usuario_id);
+      localStorage.setItem("usuarioLogado", dados.usuarioLogado_id);
       localStorage.setItem("emailUsuarioLogado", dados.usuario);
       setTimeout(() => { window.location.href = "sessoes.html"; }, 1500);
     } else {
@@ -55,7 +55,7 @@ document.querySelector("#form-login").addEventListener("submit", async (e) => {
     });
     const dados = await res.json();
     if (res.ok) {
-      localStorage.setItem("usuarioLogado", dados.usuario_id);
+      localStorage.setItem("usuarioLogado", dados.usuarioLogado_id);
       localStorage.setItem("emailUsuarioLogado", dados.usuario);
       mostrarToast("Login efetuado com sucesso!", "sucesso");
       setTimeout(() => { window.location.href = "sessoes.html"; }, 1500);

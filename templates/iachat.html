@@ -95,7 +95,7 @@
       const chat = document.getElementById("chat-messages");
       const input = document.getElementById("msg");
 
-      if (!localStorage.getItem("usuario_id")) {
+      if (!localStorage.getItem("usuarioLogado")) {
         window.location.href = "login.html";
       }
 
@@ -184,8 +184,8 @@
 
       // Função de Fallback caso o script externo exija a função global de logout
       function fazerLogout() {
-        localStorage.removeItem("usuario_id");
-        localStorage.removeItem("usuario_email");
+        localStorage.removeItem("usuarioLogado");
+        localStorage.removeItem("emailUsuarioLogado");
         window.location.href = "login.html";
       }
     </script>
