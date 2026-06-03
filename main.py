@@ -223,8 +223,7 @@ def remover_favorito(id_banco: int):
 @app.post("/api/chat")
 async def chat(data: dict):
     """
-    Chat com Ollama hospedado no HuggingFace Spaces
-    Usando TinyLlama (rápido)
+    Chat com Ollama otimizado para o TinyLlama não alucinar
     """
     try:
         texto = data.get("texto", "")
@@ -232,45 +231,45 @@ async def chat(data: dict):
         if not texto:
             return {"sucesso": False, "erro": "Texto vazio"}
         
-        # Prompt otimizado pra TinyLlama
-        prompt_sistema = """Você é um assistente amigável em português do Brasil.
-Responda de forma concisa e direta.
-Sempre em português."""
+        # PROMPT ULTRA RÍGIDO: Mostra pro TinyLlama exatamente o formato que ele deve responder
+        prompt_sistema = """[INST] Você é o KitchenHub, um chef de cozinha assistente virtual.
+        Você NÃO conversa sobre outros assuntos. Você APENAS responde sobre receitas e culinária.
+        Sempre responda em português do Brasil de forma curta.
+
+        Exemplo de boa resposta:
+        "Olá! Sou o assistente do KitchenHub. Digite os ingredientes que você tem na geladeira e eu te ajudo a criar uma receita deliciosa!"
+        [/INST]"""
         
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.post(
                 f"{OLLAMA_URL}/api/generate",
                 json={
                     "model": "tinyllama",
-                    "prompt": f"{prompt_sistema}\n\nPergunta: {texto}",
+                    "prompt": f"{prompt_sistema}\n\nUsuário: {texto}\nAssistente:",
                     "stream": False,
-                    "temperature": 0.7
+                    "temperature": 0.3,  # Baixamos a temperatura para ele ser menos "criativo" e errar menos
+                    "stop": ["Usuário:", "[INST]"] # Trava para ele não simular a conversa sozinho
                 }
             )
         
         if response.status_code == 200:
             result = response.json()
+            resposta_ia = result.get("response", "").strip()
+            
+            # Limpeza rápida caso ele repita o prompt
+            if "Pergunta:" in resposta_ia:
+                resposta_ia = resposta_ia.split("Pergunta:")[0].strip()
+                
             return {
                 "sucesso": True,
-                "resposta": result.get("response", "Sem resposta").strip()
+                "resposta": resposta_ia if resposta_ia else "Olá! Como posso te ajudar com suas receitas hoje?"
             }
         else:
-            return {
-                "sucesso": False,
-                "erro": f"Erro do servidor: {response.status_code}"
-            }
-    
-    except httpx.TimeoutException:
-        return {
-            "sucesso": False,
-            "erro": "Timeout - IA está pensando. Tente novamente!"
-        }
+            return {"sucesso": False, "erro": f"Erro do servidor: {response.status_code}"}
+            
     except Exception as e:
         print(f"Erro no chat: {e}")
-        return {
-            "sucesso": False,
-            "erro": f"Erro: {str(e)}"
-        }
+        return {"sucesso": False, "erro": f"Erro: {str(e)}"}
 
 
 @app.get("/api/health-ollama")
@@ -313,19 +312,23 @@ async def health_ollama():
 async def gerar_receita_ia(ingredientes: str):
     """
     Gera uma receita usando TinyLlama (rápido)
-    Otimizado para respostas rápidas
+    Otimizado com tags de controle para não quebrar o português
     """
     try:
-        # Prompt curto e eficiente pra TinyLlama
-        prompt = f"""Crie uma receita simples com: {ingredientes}
+        # Prompt ultra engessado com as tags [INST] que o TinyLlama obedece
+        prompt = f"""[INST] Você é um chef de cozinha brasileiro. Crie uma receita simples usando obrigatoriamente estes ingredientes: {ingredientes}.
+        Você deve responder APENAS no formato do exemplo abaixo, em português do Brasil. Não adicione saudações ou textos extras.
 
-Formato:
-Nome: 
-Ingredientes: (lista)
-Modo de preparo: (passos)
-Tempo: 
-
-Responda só isso, em português."""
+        Exemplo de formato exigido:
+        Nome: Omelete Rápido
+        Ingredientes:
+        - 2 Ovos
+        - Sal a gosto
+        Modo de preparo:
+        1. Bata os ovos.
+        2. Cozinhe na frigideira.
+        Tempo: 5 minutos
+        [/INST]"""
 
         async with httpx.AsyncClient(timeout=90) as client:
             response = await client.post(
@@ -334,36 +337,34 @@ Responda só isso, em português."""
                     "model": "tinyllama",
                     "prompt": prompt,
                     "stream": False,
-                    "temperature": 0.5
+                    "temperature": 0.2,  # Baixamos para 0.2 para ele focar estritamente no formato
+                    "stop": ["[/INST]", "Usuário:"]
                 }
             )
         
         if response.status_code == 200:
             result = response.json()
+            receita_gerada = result.get("response", "").strip()
+            
             return {
                 "sucesso": True,
-                "receita": result.get("response", "Erro ao gerar").strip(),
+                "receita": receita_gerada if receita_gerada else "Não foi possível estruturar a receita. Tente outros ingredientes.",
                 "modelo": "tinyllama"
             }
         else:
             return {
                 "sucesso": False,
-                "erro": f"Erro do servidor"
+                "erro": f"Erro do servidor de IA: {response.status_code}"
             }
     
     except httpx.TimeoutException:
         return {
             "sucesso": False,
-            "erro": "Demorou muito. Tente novamente!"
-        }
-    except httpx.ConnectError:
-        return {
-            "sucesso": False,
-            "erro": "Sem conexão com IA"
+            "erro": "O servidor de IA demorou para responder. Tente novamente!"
         }
     except Exception as e:
         print(f"Erro ao gerar receita: {e}")
         return {
             "sucesso": False,
-            "erro": f"Erro: {str(e)}"
+            "erro": "Erro ao processar os ingredientes."
         }
