@@ -10,9 +10,6 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
-from dotenv import load_dotenv
-load_dotenv()  # Carrega as variáveis do arquivo .env
-
 # ---- CONFIGURAÇÃO ----
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///receitas.db")
@@ -23,16 +20,6 @@ OLLAMA_URL = os.getenv(
     "OLLAMA_URL",
     "https://vxzs-ollama-api.hf.space"
 )
-
-# Token do Hugging Face para autorizar as requisições à API privada/pública do Space
-# O token NÃO deve ficar hardcoded aqui para evitar bloqueio do GitHub
-HF_TOKEN = os.getenv("HF_TOKEN", "coloque_seu_token_aqui_ou_na_env")
-
-# Cabeçalhos padrão para comunicação segura com o Space
-OLLAMA_HEADERS = {
-    "Authorization": f"Bearer {HF_TOKEN}",
-    "Content-Type": "application/json"
-}
 
 engine = create_engine(DATABASE_URL)
 
@@ -65,18 +52,12 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-origins = [
-    "https://kitchenhubcom-production.up.railway.app/api/chat",  # Seu front-end no Railway
-    "http://localhost",                                 # Caso queira testar local
-    "http://127.0.0.1:8000",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,            # Troca o "*" pela lista específica
-    allow_credentials=True,           # Altere para True para o navegador aceitar cookies/sessões se precisar
-    allow_methods=["*"],              # Libera todos os métodos (GET, POST, OPTIONS, DELETE, etc)
-    allow_headers=["*"],              # Libera todos os cabeçalhos comuns
+    allow_origins=["*"],
+    allow_methods=["GET", "POST", "DELETE"],
+    allow_credentials=False,
+    allow_headers=["Content-Type"],
 )
 
 # Arquivos estáticos e assets
@@ -241,22 +222,29 @@ def remover_favorito(id_banco: int):
 
 @app.post("/api/chat")
 async def chat(data: dict):
+    """
+    Chat com Ollama hospedado no HuggingFace Spaces
+    Usando TinyLlama (rápido)
+    """
     try:
         texto = data.get("texto", "")
+        
         if not texto:
             return {"sucesso": False, "erro": "Texto vazio"}
         
-        # Configura o httpx para esperar até 40 segundos só para conectar com o Hugging Face
-        timeout_config = httpx.Timeout(180.0, connect=40.0)
+        # Prompt otimizado pra TinyLlama
+        prompt_sistema = """Você é um assistente amigável em português do Brasil.
+Responda de forma concisa e direta.
+Sempre em português."""
         
-        async with httpx.AsyncClient(timeout=timeout_config) as client:
+        async with httpx.AsyncClient(timeout=60) as client:
             response = await client.post(
                 f"{OLLAMA_URL}/api/generate",
-                headers=OLLAMA_HEADERS,
                 json={
-                    "model": "llama3.2:3b",
-                    "prompt": texto,
-                    "stream": False
+                    "model": "tinyllama",
+                    "prompt": f"{prompt_sistema}\n\nPergunta: {texto}",
+                    "stream": False,
+                    "temperature": 0.7
                 }
             )
         
@@ -264,26 +252,35 @@ async def chat(data: dict):
             result = response.json()
             return {
                 "sucesso": True,
-                "resposta": result.get("response", "Sem resposta")
+                "resposta": result.get("response", "Sem resposta").strip()
             }
         else:
-            return {"sucesso": False, "erro": f"Erro do servidor Ollama: {response.status_code}"}
-            
+            return {
+                "sucesso": False,
+                "erro": f"Erro do servidor: {response.status_code}"
+            }
+    
     except httpx.TimeoutException:
-        return {"sucesso": False, "erro": "A IA demorou para responder. Tente enviar sua mensagem novamente em instantes!"}
+        return {
+            "sucesso": False,
+            "erro": "Timeout - IA está pensando. Tente novamente!"
+        }
     except Exception as e:
         print(f"Erro no chat: {e}")
-        return {"sucesso": False, "erro": f"Erro: {str(e)}"}
+        return {
+            "sucesso": False,
+            "erro": f"Erro: {str(e)}"
+        }
 
 
 @app.get("/api/health-ollama")
 async def health_ollama():
     """
-    Verifica se Ollama está online no HuggingFace Spaces passando o token
+    Verifica se Ollama está online no HuggingFace Spaces
     """
     try:
         async with httpx.AsyncClient(timeout=10) as client:
-            response = await client.get(f"{OLLAMA_URL}/api/tags", headers=OLLAMA_HEADERS)
+            response = await client.get(f"{OLLAMA_URL}/api/tags")
         
         if response.status_code == 200:
             data = response.json()
@@ -303,7 +300,7 @@ async def health_ollama():
     except httpx.ConnectError:
         return {
             "status": "erro",
-            "mensagem": "Não conseguiu conectar ao Ollama. URL configurada corretamente?"
+            "mensagem": "Não conseguiu conectar ao Ollama"
         }
     except Exception as e:
         return {
@@ -315,29 +312,29 @@ async def health_ollama():
 @app.get("/api/gerar-receita-ia/{ingredientes}")
 async def gerar_receita_ia(ingredientes: str):
     """
-    Gera uma receita usando Ollama hospedado no HuggingFace Spaces passando o token
+    Gera uma receita usando TinyLlama (rápido)
+    Otimizado para respostas rápidas
     """
     try:
-        prompt = f"""Crie uma receita DETALHADA com: {ingredientes}
+        # Prompt curto e eficiente pra TinyLlama
+        prompt = f"""Crie uma receita simples com: {ingredientes}
 
-Inclua obrigatoriamente:
-1. Nome da receita
-2. Lista completa de ingredientes com quantidades
-3. Modo de preparo (passo a passo numerado)
-4. Tempo de preparo
-5. Dificuldade (fácil/médio/difícil)
-6. Rendimento
+Formato:
+Nome: 
+Ingredientes: (lista)
+Modo de preparo: (passos)
+Tempo: 
 
-Responda SEMPRE em português do Brasil."""
+Responda só isso, em português."""
 
-        async with httpx.AsyncClient(timeout=180) as client:
+        async with httpx.AsyncClient(timeout=90) as client:
             response = await client.post(
                 f"{OLLAMA_URL}/api/generate",
-                headers=OLLAMA_HEADERS,
                 json={
-                    "model": "llama3.2:3b",
+                    "model": "tinyllama",
                     "prompt": prompt,
-                    "stream": False
+                    "stream": False,
+                    "temperature": 0.5
                 }
             )
         
@@ -345,28 +342,28 @@ Responda SEMPRE em português do Brasil."""
             result = response.json()
             return {
                 "sucesso": True,
-                "receita": result.get("response", "Erro ao gerar"),
-                "modelo": "llama3.2:3b"
+                "receita": result.get("response", "Erro ao gerar").strip(),
+                "modelo": "tinyllama"
             }
         else:
             return {
                 "sucesso": False,
-                "erro": f"Erro do servidor: {response.status_code}"
+                "erro": f"Erro do servidor"
             }
     
     except httpx.TimeoutException:
         return {
             "sucesso": False,
-            "erro": "Timeout - Ollama está pensando (pode levar até 3 minutos). Tente novamente!"
+            "erro": "Demorou muito. Tente novamente!"
         }
     except httpx.ConnectError:
         return {
             "sucesso": False,
-            "erro": "Não conseguiu conectar ao servidor de IA. Tente novamente em alguns segundos."
+            "erro": "Sem conexão com IA"
         }
     except Exception as e:
         print(f"Erro ao gerar receita: {e}")
         return {
             "sucesso": False,
-            "erro": f"Erro ao gerar receita: {str(e)}"
+            "erro": f"Erro: {str(e)}"
         }
