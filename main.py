@@ -1,4 +1,5 @@
 import os
+import asyncio
 from contextlib import asynccontextmanager
 from typing import List, Optional
 
@@ -9,6 +10,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Field, Session, SQLModel, create_engine, select
+
+# Cache global na memória do servidor para evitar chamadas duplicadas à API de tradução
+CACHE_TRADUCOES = {}
 
 # ---- CONFIGURAÇÃO ----
 
@@ -24,7 +28,10 @@ OLLAMA_URL = os.getenv(
 # Modelo ideal: leve, rápido no Hugging Face e ótimo em português
 MODELO_IA = "qwen2.5:1.5b"
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL, 
+    connect_args={"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
+)
 
 
 # ---- MODELOS ----
@@ -138,8 +145,18 @@ async def buscar_externas(categoria: str):
         return []
 
 
+# Função auxiliar síncrona isolada exclusivamente para rodar de forma segura em uma Thread separada
+def _executar_traducao_segura(partes_texto: list) -> str:
+    texto_junto = " ||| ".join(partes_texto)
+    return GoogleTranslator(source="en", target="pt").translate(texto_junto)
+
+
 @app.get("/api/externa/receita-detalhes/{id_receita}")
 async def obter_detalhes(id_receita: str):
+    # Entrega imediata se já houver cache da tradução na memória do servidor
+    if id_receita in CACHE_TRADUCOES:
+        return CACHE_TRADUCOES[id_receita]
+
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:
             resposta = await client.get(
@@ -166,31 +183,38 @@ async def obter_detalhes(id_receita: str):
                 ingredientes_en.append(f"{med} - {ing}" if med and med.strip() else ing)
 
         titulo_pt, instrucoes_pt, ingredientes_pt = titulo, instrucoes, ingredientes_en
+        
         try:
             partes = [titulo, instrucoes] + ingredientes_en
-            traduzido = GoogleTranslator(source="en", target="pt").translate(" ||| ".join(partes))
+            # MELHORIA CRÍTICA: Executa a tradução bloqueante em uma Thread separada sem travar o loop principal do FastAPI
+            traduzido = await asyncio.to_thread(_executar_traducao_segura, partes)
+            
             if traduzido:
                 split = traduzido.split(" ||| ")
                 if len(split) >= 2:
                     titulo_pt, instrucoes_pt = split[0], split[1]
                     ingredientes_pt = split[2:]
         except Exception as e:
-            print(f"Falha na tradução: {e}. Usando inglês.")
+            print(f"Falha na tradução: {e}. Usando dados originais em inglês de Fallback.")
 
-        return {
+        # Armazena no cache global para evitar reprocessamentos futuros
+        CACHE_TRADUCOES[id_receita] = {
             "id": id_meal,
             "name": titulo_pt,
             "image": imagem,
             "instructions": instrucoes_pt,
             "ingredients": [i.strip() for i in ingredientes_pt],
         }
+
+        return CACHE_TRADUCOES[id_receita]
+        
     except HTTPException:
         raise
     except Exception as e:
         print(f"Erro crítico na rota de detalhes: {e}")
         raise HTTPException(status_code=500, detail="Erro interno ao processar a receita")
-
-
+    
+    
 # ---- MEU LIVRO ----
 
 @app.get("/api/meu-livro/{id_usuario}", response_model=List[ReceitaFavorita])
@@ -238,7 +262,7 @@ async def chat(data: dict):
 Suas regras essenciais:
 1. Responda APENAS sobre receitas, culinária e ingredientes.
 2. Se o usuário fugir do assunto de culinária, responda educadamente: "Desculpe, eu só sei falar sobre receitas e culinária! Como posso ajudar na sua cozinha hoje?".
-3. Seja sempre direto, amigável e responda em português do Brasil de forma curta."""
+3. Seja sempre direto, amigável e responda em português do Brasil de forma corta e objetiva."""
         
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.post(
@@ -248,7 +272,7 @@ Suas regras essenciais:
                     "prompt": f"{prompt_sistema}\n\nUsuário: {texto}\nAssistente:",
                     "stream": False,
                     "temperature": 0.4,
-                    "system": prompt_sistema  # Passando explicitamente o contexto do sistema
+                    "system": prompt_sistema
                 }
             )
         
@@ -319,8 +343,8 @@ async def gerar_receita_ia(ingredientes: str):
         - [Ingrediente 1]
         - [Ingrediente 2]
         Modo de preparo:
-        1. [Passo 1]
-        2. [Passo 2]
+        - [Passo 1]
+        - [Passo 2]
         Tempo: [X] minutos"""
 
         async with httpx.AsyncClient(timeout=90) as client:
@@ -330,8 +354,8 @@ async def gerar_receita_ia(ingredientes: str):
                     "model": MODELO_IA,
                     "prompt": prompt,
                     "stream": False,
-                    "temperature": 0.2,
-                    "stop": ["Usuário:", "Chef:"]
+                    "temperature": 0.3,
+                    "system": "Você cria receitas estruturadas direto ao ponto."
                 }
             )
         

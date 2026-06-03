@@ -1,18 +1,84 @@
 <!doctype html>
-<html>
+<html lang="pt-br">
   <head>
-    <title>Chat de Receitas - KitchenHub</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/css/iachat.css" />
+    <link rel="stylesheet" href="/static/css/toast.css" />
+    <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <title>KitchenHub - Chef IA</title>
   </head>
   <body>
+    <div id="toast-container" class="toast-container"></div>
+
     <header>
-      <h2>KitchenHub 👩‍🍳</h2>
+      <div class="logo-container">
+        <img
+          src="/assets/logo.png"
+          alt="Logo KitchenHub"
+          style="height: 40px; margin-right: 10px"
+        />
+        <h1
+          class="brand-name"
+          style="
+            color: white;
+            font-size: 24px;
+            display: inline-block;
+            vertical-align: middle;
+          "
+        >
+          KitchenHub
+          <span style="font-size: 16px; color: #ff7f50">(Chef IA)</span>
+        </h1>
+      </div>
+
+      <div
+        class="menu-wrapper"
+        style="position: absolute; right: 20px; top: 20px"
+      >
+        <button
+          class="menu-toggle"
+          id="btn-menu"
+          aria-label="Abrir menu de navegação"
+          style="background: none; width: auto; height: auto"
+        >
+          <i class="fa-solid fa-bars" style="color: white; font-size: 24px"></i>
+        </button>
+
+        <nav class="side-menu" id="menu-lateral" aria-label="Menu Principal">
+          <button class="btn-close" id="btn-fechar" aria-label="Fechar menu">
+            &times;
+          </button>
+          <ul class="nav-links">
+            <li><a href="sessoes.html">Sessões</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="index.html">Menu Principal</a></li>
+            <li><a href="iachat.html">ChefIA</a></li>
+            <li>
+              <a href="salvos.html"
+                >Livro de Receitas
+                <i class="fa fa-bookmark" aria-hidden="true"></i
+              ></a>
+            </li>
+            <li>
+              <a href="#" onclick="fazerLogout()" style="color: #e74c3c"
+                >Sair <i class="fa-solid fa-right-from-bracket"></i
+              ></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
     <main>
       <div class="chat-messages" id="chat-messages">
         <div class="mensagem bot">
-          Olá! Sou o assistente do KitchenHub. Como posso te ajudar na sua receita hoje? 👩‍🍳
+          Olá! Sou o assistente do KitchenHub. Como posso te ajudar na sua
+          receita hoje? 👩‍🍳
         </div>
       </div>
 
@@ -22,9 +88,16 @@
       </section>
     </main>
 
+    <script src="/static/js/toast.js"></script>
+    <script src="/static/js/menuhamb.js"></script>
+
     <script>
       const chat = document.getElementById("chat-messages");
       const input = document.getElementById("msg");
+
+      if (!localStorage.getItem("usuario_id")) {
+        window.location.href = "login.html";
+      }
 
       // --- Acorda a IA assim que a página entra na tela ---
       window.onload = async function () {
@@ -91,11 +164,10 @@
 
           /* 4. Trata a resposta substituindo o texto do elemento "pensando" */
           if (data.sucesso) {
-            // Substitui as quebras de linha por <br> e os asteriscos ** por <strong>
             let textoFormatado = data.resposta
               .replace(/\n/g, "<br>")
               .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-            
+
             pensando.innerHTML = textoFormatado;
           } else {
             pensando.innerText = data.erro;
@@ -108,6 +180,13 @@
 
         /* 5. Garante que o scroll desça após a resposta chegar */
         chat.scrollTop = chat.scrollHeight;
+      }
+
+      // Função de Fallback caso o script externo exija a função global de logout
+      function fazerLogout() {
+        localStorage.removeItem("usuario_id");
+        localStorage.removeItem("usuario_email");
+        window.location.href = "login.html";
       }
     </script>
   </body>

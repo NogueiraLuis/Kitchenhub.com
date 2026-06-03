@@ -1,5 +1,9 @@
 const API_BASE = "";
 
+if (!localStorage.getItem("usuario_id")) {
+    window.location.href = "login.html";
+}
+
 let todasAsReceitasSalvas = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
