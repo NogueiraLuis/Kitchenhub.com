@@ -50,7 +50,7 @@ async function salvarNoBanco(evento, idMeal, strMeal, strMealThumb) {
   evento.preventDefault();
   evento.stopPropagation();
 
-  const idUsuarioAtivo = localStorage.getItem("usuarioLogado");
+  const idUsuarioAtivo = localStorage.getItem("usuario_id");
   if (!idUsuarioAtivo || idUsuarioAtivo === "undefined" || idUsuarioAtivo === "null") {
     abrirModal();
     return;
@@ -127,7 +127,7 @@ async function carregarSugestoes(categoriaEscolhida) {
 }
 
 function fazerLogout() {
-  localStorage.removeItem("usuarioLogado");
+  localStorage.removeItem("usuario_id");
   localStorage.removeItem("emailUsuarioLogado");
   mostrarToast("Você saiu da sua conta.", "sucesso");
   setTimeout(() => { window.location.href = "index.html"; }, 1200);
