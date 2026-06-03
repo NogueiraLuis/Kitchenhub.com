@@ -5,17 +5,21 @@ const trocarLogin = document.querySelector("#cadastro");
 const telaLogin = document.querySelector(".login");
 const voltarLogin = document.querySelector("#voltar-login");
 
-cadastro.addEventListener("click", (e) => {
-  e.preventDefault();
-  telaLogin.style.display = "none";
-  trocarLogin.style.display = "flex";
-});
+if (cadastro) {
+  cadastro.addEventListener("click", (e) => {
+    e.preventDefault();
+    telaLogin.style.display = "none";
+    trocarLogin.style.display = "flex";
+  });
+}
 
-voltarLogin.addEventListener("click", (e) => {
-  e.preventDefault();
-  trocarLogin.style.display = "none";
-  telaLogin.style.display = "flex";
-});
+if (voltarLogin) {
+  voltarLogin.addEventListener("click", (e) => {
+    e.preventDefault();
+    trocarLogin.style.display = "none";
+    telaLogin.style.display = "flex";
+  });
+}
 
 document.querySelector("#form-cadastro").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -31,7 +35,8 @@ document.querySelector("#form-cadastro").addEventListener("submit", async (e) =>
     const dados = await res.json();
     if (res.ok) {
       mostrarToast("Conta criada com sucesso!", "sucesso");
-      localStorage.setItem("usuarioLogado", dados.usuarioLogado_id);
+      // CORREÇÃO AQUI: Gravando a chave correta que os outros scripts procuram
+      localStorage.setItem("usuario_id", dados.usuario_id);
       localStorage.setItem("emailUsuarioLogado", dados.usuario);
       setTimeout(() => { window.location.href = "sessoes.html"; }, 1500);
     } else {
@@ -55,7 +60,8 @@ document.querySelector("#form-login").addEventListener("submit", async (e) => {
     });
     const dados = await res.json();
     if (res.ok) {
-      localStorage.setItem("usuarioLogado", dados.usuarioLogado_id);
+      // CORREÇÃO AQUI: Gravando a chave correta que os outros scripts procuram
+      localStorage.setItem("usuario_id", dados.usuario_id);
       localStorage.setItem("emailUsuarioLogado", dados.usuario);
       mostrarToast("Login efetuado com sucesso!", "sucesso");
       setTimeout(() => { window.location.href = "sessoes.html"; }, 1500);
@@ -68,8 +74,7 @@ document.querySelector("#form-login").addEventListener("submit", async (e) => {
 });
 
 function fazerLogout() {
-  localStorage.removeItem("usuarioLogado");
+  localStorage.removeItem("usuario_id");
   localStorage.removeItem("emailUsuarioLogado");
-  mostrarToast("Você saiu da sua conta.", "sucesso");
-  setTimeout(() => { window.location.href = "index.html"; }, 1200);
+  window.location.href = "login.html";
 }

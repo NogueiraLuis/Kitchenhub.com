@@ -1,9 +1,5 @@
 const API_BASE = "";
 
-if (!localStorage.getItem("usuarioLogado")) {
-  window.location.href = "login.html";
-}
-
 const NOMES_CATEGORIAS = {
   japonesa: "Culinária Japonesa",
   massa: "Massas Italianas",
@@ -55,11 +51,7 @@ async function salvarNoBanco(evento, idMeal, strMeal, strMealThumb) {
   evento.stopPropagation();
 
   const idUsuarioAtivo = localStorage.getItem("usuarioLogado");
-  if (
-    !idUsuarioAtivo ||
-    idUsuarioAtivo === "undefined" ||
-    idUsuarioAtivo === "null"
-  ) {
+  if (!idUsuarioAtivo || idUsuarioAtivo === "undefined" || idUsuarioAtivo === "null") {
     abrirModal();
     return;
   }
@@ -96,16 +88,13 @@ async function carregarSugestoes(categoriaEscolhida) {
   vitrine.innerHTML = "<p>Carregando receitas...</p>";
 
   try {
-    const res = await fetch(
-      `${API_BASE}/api/externa/receitas?categoria=${categoriaEscolhida}`,
-    );
+    const res = await fetch(`${API_BASE}/api/externa/receitas?categoria=${categoriaEscolhida}`);
     const receitas = await res.json();
 
     vitrine.innerHTML = "";
 
     if (!receitas || receitas.length === 0) {
-      vitrine.innerHTML =
-        "<p>Nenhuma receita encontrada para esta categoria.</p>";
+      vitrine.innerHTML = "<p>Nenhuma receita encontrada para esta categoria.</p>";
       return;
     }
 
@@ -132,22 +121,8 @@ async function carregarSugestoes(categoriaEscolhida) {
       `;
       vitrine.appendChild(card);
     });
-  } catch (error) {
-    console.error(error);
-    if (typeof mostrarToast === "function") {
-      mostrarToast("Erro ao carregar receitas. Verifique sua conexão.", "erro");
-    }
-    const vitrine = document.getElementById("recipe-grid");
-    if (vitrine) {
-      vitrine.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 40px 20px;">
-          <p style="color: #fff; margin-bottom: 15px;">Ops! O servidor demorou para responder.</p>
-          <button onclick="window.location.reload()" style="background-color: #ff7f50; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
-            Tentar carregar novamente
-          </button>
-        </div>
-      `;
-    }
+  } catch {
+    mostrarToast("Erro ao carregar receitas.", "erro");
   }
 }
 
@@ -155,7 +130,5 @@ function fazerLogout() {
   localStorage.removeItem("usuarioLogado");
   localStorage.removeItem("emailUsuarioLogado");
   mostrarToast("Você saiu da sua conta.", "sucesso");
-  setTimeout(() => {
-    window.location.href = "index.html";
-  }, 1200);
+  setTimeout(() => { window.location.href = "index.html"; }, 1200);
 }

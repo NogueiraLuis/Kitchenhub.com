@@ -1,6 +1,7 @@
 const API_BASE = "";
 
-if (!localStorage.getItem("usuarioLogado")) {
+// Mantém a tua trava original com a chave correta
+if (!localStorage.getItem("usuario_id")) {
     window.location.href = "login.html";
 }
 
@@ -10,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const campoNomeTopo = document.getElementById("nome-usuario-topo");
 
   if (campoNomeTopo && usuarioAtivo) {
-    campoNomeTopo.innerHTML = ` | <span style=\"font-size: 0.9rem; color: #aaa; font-weight: normal;\">${usuarioAtivo}</span>`;
+    campoNomeTopo.innerHTML = ` | <span style="font-size: 0.9rem; color: #aaa; font-weight: normal;">${usuarioAtivo}</span>`;
   }
 
   if (!receitaId) {
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function carregarDetalhesComTratamento(receitaId) {
   const tituloElement = document.getElementById("recipe-title");
   
-  // Criando um controle de tempo limite (Timeout) de 8 segundos
+  // Cria um tempo limite de 8 segundos para requisições no Railway acordando
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 8000);
 
@@ -49,18 +50,18 @@ async function carregarDetalhesComTratamento(receitaId) {
 
     const listaIngredientes = document.getElementById("ingredients-list");
     if (listaIngredientes) {
-      listaIngredientes.innerHTML = receita.ingredients.map((ing) => `<li>${ing}</li>`).join("\");");
+      listaIngredientes.innerHTML = receita.ingredients.map((ing) => `<li>${ing}</li>`).join("");
     }
   } catch (error) {
     clearTimeout(timeoutId);
     console.error(error);
     
-    // Alerta o usuário visualmente usando seu toast.js
+    // Mostra o toast elegantemente usando o teu toast.js
     if (typeof mostrarToast === "function") {
-      mostrarToast("O servidor demorou para responder. Tentando reconectar...", "erro");
+      mostrarToast("O servidor demorou a responder. Tenta novamente.", "erro");
     }
 
-    // Substitui o "Carregando..." por uma interface de erro amigável na tela
+    // Substitui o "Carregando..." por um botão amigável de recarga
     if (tituloElement) {
       tituloElement.innerHTML = `
         <div style="text-align: center; padding: 20px;">

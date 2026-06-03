@@ -1,6 +1,6 @@
 const API_BASE = "";
 
-if (!localStorage.getItem("usuarioLogado")) {
+if (!localStorage.getItem("usuario_id")) {
     window.location.href = "login.html";
 }
 
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function buscarReceitasDoBanco() {
-  const idUsuarioAtivo = localStorage.getItem("usuarioLogado");
+  const idUsuarioAtivo = localStorage.getItem("usuario_id");
   const vitrine = document.getElementById("recipe-grid");
 
   if (!idUsuarioAtivo || idUsuarioAtivo === "null" || idUsuarioAtivo === "undefined") {
@@ -144,7 +144,7 @@ async function removerDoBanco(evento, idBanco, titulo) {
 }
 
 function fazerLogout() {
-  localStorage.removeItem("usuarioLogado");
+  localStorage.removeItem("usuario_id");
   localStorage.removeItem("emailUsuarioLogado");
   mostrarToast("Você saiu da sua conta.", "sucesso");
   setTimeout(() => { window.location.href = "index.html"; }, 1200);
