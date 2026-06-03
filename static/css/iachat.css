@@ -89,9 +89,6 @@ section {
 }
 
 /* Caixa que segura o input e o botão (Otimizado para a largura máxima do chat) */
-section > input, section > button {
-  /* Garante o alinhamento mesmo se não usar a div .input-area */
-}
 
 input {
   max-width: 800px; /* Alinhado com o tamanho do bloco de chat */

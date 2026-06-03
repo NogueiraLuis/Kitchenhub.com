@@ -226,7 +226,7 @@ def remover_favorito(id_banco: int):
 @app.post("/api/chat")
 async def chat(data: dict):
     """
-    Chat amigável e direto focado estritamente em culinária
+    Chat amigável e direto focado estritamente em culinária com Qwen
     """
     try:
         texto = data.get("texto", "")
@@ -235,11 +235,10 @@ async def chat(data: dict):
             return {"sucesso": False, "erro": "Texto vazio"}
         
         prompt_sistema = """Você é o KitchenHub, um assistente virtual especializado em culinária e receitas.
-        Suas regras essenciais:
-        1. Responda APENAS sobre receitas, culinária e ingredientes.
-        2. Se o usuário fugir do assunto de culinária, responda educadamente: "Desculpe, eu só sei falar sobre receitas e culinária! Como posso ajudar na sua cozinha hoje?".
-        3. Seja sempre direto, amigável e responda em português do Brasil de forma curta.
-        4. Jamais adicione cabeçalhos, marcações como "Usuário:" ou "Assistente:", vá direto à resposta."""
+Suas regras essenciais:
+1. Responda APENAS sobre receitas, culinária e ingredientes.
+2. Se o usuário fugir do assunto de culinária, responda educadamente: "Desculpe, eu só sei falar sobre receitas e culinária! Como posso ajudar na sua cozinha hoje?".
+3. Seja sempre direto, amigável e responda em português do Brasil de forma curta."""
         
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.post(
@@ -249,7 +248,7 @@ async def chat(data: dict):
                     "prompt": f"{prompt_sistema}\n\nUsuário: {texto}\nAssistente:",
                     "stream": False,
                     "temperature": 0.4,
-                    "stop": ["Usuário:", "Assistente:", "[INST]"]
+                    "system": prompt_sistema  # Passando explicitamente o contexto do sistema
                 }
             )
         
@@ -266,7 +265,7 @@ async def chat(data: dict):
             
     except Exception as e:
         print(f"Erro no chat: {e}")
-        return {"sucesso": False, "erro": f"Erro: {str(e)}"}
+        return {"sucesso": False, "erro": f"Erro interno: {str(e)}"}
 
 
 @app.get("/api/health-ollama")
