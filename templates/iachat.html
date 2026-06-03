@@ -1,23 +1,23 @@
 <!doctype html>
 <html>
   <head>
-    <title>Chat de Receitas</title>
+    <title>Chat de Receitas - KitchenHub</title>
     <link rel="stylesheet" href="/static/css/iachat.css" />
   </head>
   <body>
     <header>
-      <h2>ChefIA 👩‍🍳</h2>
+      <h2>KitchenHub 👩‍🍳</h2>
     </header>
 
     <main>
       <div class="chat-messages" id="chat-messages">
         <div class="mensagem bot">
-          Olá! Como posso te ajudar na sua receita hoje? 👩‍🍳
+          Olá! Sou o assistente do KitchenHub. Como posso te ajudar na sua receita hoje? 👩‍🍳
         </div>
       </div>
 
       <section>
-        <input id="msg" class="entrada" placeholder="Digite sua pergunta" />
+        <input id="msg" class="entrada" placeholder="Digite sua pergunta..." />
         <button class="botao" onclick="enviar()">Enviar</button>
       </section>
     </main>
@@ -68,8 +68,7 @@
         /* 2. Cria e adiciona a mensagem temporária de carregamento do bot */
         const pensando = document.createElement("div");
         pensando.classList.add("mensagem", "bot");
-        pensando.innerText =
-          "🍳 Pensando...";
+        pensando.innerText = "🍳 Pensando...";
         chat.appendChild(pensando);
         chat.scrollTop = chat.scrollHeight;
 
@@ -95,7 +94,8 @@
             // Substitui as quebras de linha por <br> e os asteriscos ** por <strong>
             let textoFormatado = data.resposta
               .replace(/\n/g, "<br>")
-              .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>"); // Corrigido aqui!
+              .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+            
             pensando.innerHTML = textoFormatado;
           } else {
             pensando.innerText = "Erro: " + data.erro;

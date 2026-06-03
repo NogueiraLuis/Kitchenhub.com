@@ -5,152 +5,110 @@
 }
 
 body {
-  /* background-color: #212121; */
-
   background:
     linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 10, 0.8)),
     url("/assets/tabua2.jpg");
-
+  background-size: cover;
+  background-position: center;
   font-family: Arial, Helvetica, sans-serif;
-
   height: 100vh;
-
   display: flex;
   flex-direction: column;
 }
 
 /* topo */
-
 header {
   padding: 20px;
-
   border-bottom: 1px solid #3a3a3a;
+  background-color: rgba(0, 0, 0, 0.3); /* Dá um leve destaque ao topo */
 }
 
 h2 {
   color: white;
-
   font-size: 30px;
+  text-align: center; /* Centraliza o título para ficar mais harmônico */
 }
 
 /* área principal */
-
 main {
   flex: 1;
-
   display: flex;
-
   flex-direction: column;
-
   justify-content: space-between;
-
   overflow: hidden;
 }
 
 /* mensagens */
-
 #chat-messages {
   flex: 1;
-
   overflow-y: auto;
-
   width: 100%;
-
   max-width: 900px;
-
   margin: 0 auto;
-
   padding: 20px;
-
   display: flex;
-
   flex-direction: column;
-
-  gap: 5px;
+  gap: 12px; /* Aumentado de 5px para 12px para as mensagens respirarem melhor */
 }
 
 /* mensagem padrão */
-
 .mensagem {
   padding: 14px 18px;
-
   border-radius: 18px;
-
-  max-width: 800px;
-
+  max-width: 75%; /* Ajustado para que mensagens longas não ocupem a tela inteira */
   width: fit-content;
-
   line-height: 1.5;
-
+  font-size: 16px;
   animation: aparecer 0.2s ease;
 }
 
 /* bot */
-
 .bot {
   align-self: flex-start;
-
   background-color: #2f2f2f;
-
   color: white;
+  border-bottom-left-radius: 5px; /* Detalhe visual de balão de chat */
 }
 
 /* usuário */
-
 .usuario {
   align-self: flex-end;
-
-  background-color: #3b3b3b;
-
+  background-color: #005c4b; /* Mudei para um tom verde/escuro clássico de chat para destacar do bot */
   color: white;
+  border-bottom-right-radius: 5px; /* Detalhe visual de balão de chat */
 }
 
-/* área input */
-
+/* área input (Corrigido para aplicar o Flexbox direto nos elementos do seu HTML) */
 section {
   padding: 20px;
-
   display: flex;
-
   justify-content: center;
-
   border-top: 1px solid #3a3a3a;
+  background-color: rgba(20, 20, 20, 0.8); /* Fundo sutil para a área de digitação */
+  width: 100%;
 }
 
-/* caixa input */
-
-.input-area {
-  width: 100%;
-
-  max-width: 900px;
-
-  display: flex;
-
-  gap: 10px;
+/* Caixa que segura o input e o botão (Otimizado para a largura máxima do chat) */
+section > input, section > button {
+  /* Garante o alinhamento mesmo se não usar a div .input-area */
 }
 
 input {
-  flex: 1;
-
+  max-width: 800px; /* Alinhado com o tamanho do bloco de chat */
+  width: 100%;
   height: 55px;
-
   border: none;
-
   outline: none;
-
   border-radius: 15px;
-
   background-color: #2f2f2f;
-
   color: white;
-
-  padding-left: 20px;
-
+  padding: 0 20px;
   font-size: 16px;
+  margin-right: 10px; /* Cria o espaçamento correto entre o input e o botão */
 }
 
-.entrada {
-  max-width: 500px;
+input:focus {
+  border: 1px solid #5a5a5a; /* Feedback visual quando o usuário clica para digitar */
 }
 
 input::placeholder {
@@ -159,38 +117,33 @@ input::placeholder {
 
 button {
   width: 90px;
-
+  height: 55px; /* Garante a mesma altura do input */
   border: none;
-
   border-radius: 15px;
-
   background-color: #40414f;
-
   color: white;
-
+  font-weight: bold;
   cursor: pointer;
-
   transition: 0.2s;
 }
 
 button:hover {
   transform: translateY(-2px);
-
   background-color: #4d4d5c;
 }
 
-/* animação */
+button:active {
+  transform: translateY(0);
+}
 
+/* animação */
 @keyframes aparecer {
   from {
     opacity: 0;
-
     transform: translateY(10px);
   }
-
   to {
     opacity: 1;
-
     transform: translateY(0);
   }
 }

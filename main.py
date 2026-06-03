@@ -21,6 +21,9 @@ OLLAMA_URL = os.getenv(
     "https://vxzs-ollama-api.hf.space"
 )
 
+# Modelo ideal: leve, rápido no Hugging Face e ótimo em português
+MODELO_IA = "qwen2.5:1.5b"
+
 engine = create_engine(DATABASE_URL)
 
 
@@ -223,7 +226,7 @@ def remover_favorito(id_banco: int):
 @app.post("/api/chat")
 async def chat(data: dict):
     """
-    Chat com Ollama otimizado para o TinyLlama não alucinar
+    Chat amigável e direto focado estritamente em culinária
     """
     try:
         texto = data.get("texto", "")
@@ -231,27 +234,22 @@ async def chat(data: dict):
         if not texto:
             return {"sucesso": False, "erro": "Texto vazio"}
         
-        # PROMPT ULTRA RÍGIDO: Mostra pro TinyLlama exatamente o formato que ele deve responder
-        # PROMPT DIRETO: Sem exemplos para o TinyLlama não copiar o texto errado
-        prompt_sistema = """Você é o KitchenHub, um chef de cozinha assistente virtual.
-        Você NUNCA fala sobre outros assuntos. Você APENAS responde sobre receitas e culinária.
-        Responda sempre em português do Brasil, de forma curta, educada e direta.
-        Não adicione marcações como [INST] ou Pergunta na sua resposta. Além disso, NUNCA repita o que o usuário disse. Responda apenas a resposta, sem introdução ou conclusão.
-        Se o usuário fizer uma pergunta que não seja sobre culinária, responda: "Desculpe, só posso ajudar com receitas e culinária. Como posso te ajudar com suas receitas hoje?".
-        Se o usuário pedir uma receita, responda apenas a receita, sem introdução ou conclusão. Seja direto e objetivo.
-        Se o usuário fizer uma pergunta sobre culinária, responda de forma clara e direta, sem rodeios. Seja objetivo e educado.
-        Se o usuário fizer uma pergunta vaga, responda pedindo mais detalhes, mas sem usar palavras como "Pergunta" ou "Usuário". Seja direto e educado.
-        """
+        prompt_sistema = """Você é o KitchenHub, um assistente virtual especializado em culinária e receitas.
+        Suas regras essenciais:
+        1. Responda APENAS sobre receitas, culinária e ingredientes.
+        2. Se o usuário fugir do assunto de culinária, responda educadamente: "Desculpe, eu só sei falar sobre receitas e culinária! Como posso ajudar na sua cozinha hoje?".
+        3. Seja sempre direto, amigável e responda em português do Brasil de forma curta.
+        4. Jamais adicione cabeçalhos, marcações como "Usuário:" ou "Assistente:", vá direto à resposta."""
         
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.post(
                 f"{OLLAMA_URL}/api/generate",
                 json={
-                    "model": "tinyllama",
+                    "model": MODELO_IA,
                     "prompt": f"{prompt_sistema}\n\nUsuário: {texto}\nAssistente:",
                     "stream": False,
-                    "temperature": 0.3,  # Baixamos a temperatura para ele ser menos "criativo" e errar menos
-                    "stop": ["Usuário:", "[INST]"] # Trava para ele não simular a conversa sozinho
+                    "temperature": 0.4,
+                    "stop": ["Usuário:", "Assistente:", "[INST]"]
                 }
             )
         
@@ -259,16 +257,12 @@ async def chat(data: dict):
             result = response.json()
             resposta_ia = result.get("response", "").strip()
             
-            # Limpeza rápida caso ele repita o prompt
-            if "Pergunta:" in resposta_ia:
-                resposta_ia = resposta_ia.split("Pergunta:")[0].strip()
-                
             return {
                 "sucesso": True,
                 "resposta": resposta_ia if resposta_ia else "Olá! Como posso te ajudar com suas receitas hoje?"
             }
         else:
-            return {"sucesso": False, "erro": f"Erro do servidor: {response.status_code}"}
+            return {"sucesso": False, "erro": f"Erro do servidor de IA: {response.status_code}"}
             
     except Exception as e:
         print(f"Erro no chat: {e}")
@@ -314,34 +308,31 @@ async def health_ollama():
 @app.get("/api/gerar-receita-ia/{ingredientes}")
 async def gerar_receita_ia(ingredientes: str):
     """
-    Gera uma receita usando TinyLlama (rápido)
-    Otimizado com tags de controle para não quebrar o português
+    Gera uma receita estruturada usando os ingredientes informados
     """
     try:
-        # Prompt ultra engessado com as tags [INST] que o TinyLlama obedece
-        prompt = f"""[INST] Você é um chef de cozinha brasileiro. Você deve criar uma receita simples usando obrigatoriamente estes ingredientes: {ingredientes}.
-        Você deve responder APENAS no formato do exemplo abaixo, em português do Brasil. Não adicione saudações ou textos extras. Além disso, NUNCA repita os ingredientes ou o que o usuário disse. Responda apenas a receita, sem introdução ou conclusão. Seja direto e objetivo. Se o usuário pedir uma receita que não seja possível com os ingredientes fornecidos, responda apenas "Não foi possível criar uma receita com esses ingredientes. Tente outros ingredientes.". Também, se o usuário pedir uma receita que seja muito complexa para os ingredientes fornecidos, responda apenas "Com esses ingredientes, só consigo criar receitas bem simples. Tente adicionar mais ingredientes para algo mais elaborado.". Se o usuário pedir uma receita que seja possível, responda seguindo estritamente o formato abaixo, sem variações. Use os ingredientes fornecidos, mas sinta-se livre para ajustar as quantidades e adicionar temperos básicos como sal, pimenta e óleo. O tempo de preparo deve ser estimado com base na complexidade da receita, mas tente manter as receitas simples e rápidas. Seja criativo dentro dessas limitações! Se o usuário não tiver o ingrediente, dê outra opção de receita usando os ingredientes disponíveis. Lembre-se: responda APENAS no formato do exemplo, sem variações, sem introdução e sem conclusão. Seja direto e objetivo.
+        prompt = f"""Você é um chef de cozinha experiente. Crie uma receita simples e objetiva em português do Brasil usando estritamente estes ingredientes: {ingredientes}.
+        Não envie textos de introdução nem de conclusão, comece direto pelo nome da receita.
 
-        Exemplo de formato exigido:
-        Nome: Omelete Rápido
+        Siga exatamente esta estrutura de resposta:
+        Nome: [Nome da Receita]
         Ingredientes:
-        - 2 Ovos
-        - Sal a gosto
+        - [Ingrediente 1]
+        - [Ingrediente 2]
         Modo de preparo:
-        1. Bata os ovos.
-        2. Cozinhe na frigideira.
-        Tempo: 5 minutos
-        [/INST]"""
+        1. [Passo 1]
+        2. [Passo 2]
+        Tempo: [X] minutos"""
 
         async with httpx.AsyncClient(timeout=90) as client:
             response = await client.post(
                 f"{OLLAMA_URL}/api/generate",
                 json={
-                    "model": "tinyllama",
+                    "model": MODELO_IA,
                     "prompt": prompt,
                     "stream": False,
-                    "temperature": 0.2,  # Baixamos para 0.2 para ele focar estritamente no formato
-                    "stop": ["[/INST]", "Usuário:"]
+                    "temperature": 0.2,
+                    "stop": ["Usuário:", "Chef:"]
                 }
             )
         
@@ -352,7 +343,7 @@ async def gerar_receita_ia(ingredientes: str):
             return {
                 "sucesso": True,
                 "receita": receita_gerada if receita_gerada else "Não foi possível estruturar a receita. Tente outros ingredientes.",
-                "modelo": "tinyllama"
+                "modelo": MODELO_IA
             }
         else:
             return {
