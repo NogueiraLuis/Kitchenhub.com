@@ -83,7 +83,7 @@
         console.log("Acordando o servidor de IA em segundo plano...");
         try {
           await fetch(
-            "https://kitchenhubcom-production.up.railway.app/api/health-ollama",
+            "https://kthub.up.railway.app/api/health-ollama",
           );
           console.log("Servidor de IA alertado com sucesso.");
         } catch (e) {
@@ -120,7 +120,7 @@
 
         try {
           const res = await fetch(
-            "https://kitchenhubcom-production.up.railway.app/api/chat",
+            "https://kthub.up.railway.app/api/chat",
             {
               method: "POST",
               headers: {
