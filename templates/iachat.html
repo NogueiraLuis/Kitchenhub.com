@@ -15,64 +15,62 @@
   <body>
     <div id="toast-container" class="toast-container"></div>
 
+    <nav class="side-menu" id="menu-lateral" aria-label="Menu Principal">
+      <button class="btn-close" id="btn-fechar" aria-label="Fechar menu">
+        &times;
+      </button>
+      <ul class="nav-links">
+        <li><a href="sessoes.html">Sessões</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="index.html">Menu Principal</a></li>
+        <li><a href="iachat.html">ChefIA</a></li>
+        <li>
+          <a href="salvos.html"
+            >Livro de Receitas <i class="fa fa-bookmark" aria-hidden="true"></i
+          ></a>
+        </li>
+        <li>
+          <a href="#" onclick="fazerLogout()" style="color: #e74c3c"
+            >Sair <i class="fa-solid fa-right-from-bracket"></i
+          ></a>
+        </li>
+      </ul>
+    </nav>
 
+    <div class="conteudo-principal">
+      <header id="header" class="main-header">
+        <button
+          class="menu-toggle"
+          id="btn-menu"
+          aria-label="Abrir menu de navegação"
+        >
+          <i class="fa-solid fa-bars"></i>
+        </button>
 
-    <main>
-      <nav id="header" class="main-header">
         <div class="logo-container">
           <img src="/assets/logo.png" alt="Logo KitchenHub" />
-          <h1 class="brand-name">
-            KitchenHub<span id="nome-usuario-topo"></span>
-          </h1>
+          <h1 class="brand-name">KitchenHub | IA</h1>
+        </div>
+      </header>
+
+      <main>
+        <div class="chat-messages" id="chat-messages">
+          <div class="mensagem bot">
+            Olá! Sou o assistente do KitchenHub. Como posso te ajudar na sua
+            receita hoje? 👩‍🍳
+          </div>
         </div>
 
-        <div class="menu-wrapper">
-          <button
-            class="menu-toggle"
-            id="btn-menu"
-            aria-label="Abrir menu de navegação"
-          >
-            <i class="fa-solid fa-bars"></i>
-          </button>
-
-          <nav class="side-menu" id="menu-lateral" aria-label="Menu Principal">
-            <button class="btn-close" id="btn-fechar" aria-label="Fechar menu">
-              &times;
-            </button>
-            <ul class="nav-links">
-              <li><a href="sessoes.html">Sessões</a></li>
-              <li><a href="login.html">Login</a></li>
-              <li><a href="index.html">Menu Principal</a></li>
-              <li><a href="iachat.html">ChefIA</a> 
-              </li>
-              <li>
-                <a href="salvos.html"
-                  >Livro de Receitas
-                  <i class="fa fa-bookmark" aria-hidden="true"></i
-                ></a>
-              </li>
-              <li>
-                <a href="#" onclick="fazerLogout()" style="color: #e74c3c"
-                  >Sair <i class="fa-solid fa-right-from-bracket"></i
-                ></a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </nav>
-
-      <div class="chat-messages" id="chat-messages">
-        <div class="mensagem bot">
-          Olá! Sou o assistente do KitchenHub. Como posso te ajudar na sua
-          receita hoje? 👩‍🍳
-        </div>
-      </div>
-
-      <section>
-        <input id="msg" class="entrada" placeholder="Digite sua pergunta..." />
-        <button class="botao" onclick="enviar()">Enviar</button>
-      </section>
-    </main>
+        <section>
+          <input
+            id="msg"
+            class="entrada"
+            placeholder="Digite sua pergunta..."
+          />
+          <button class="botao" onclick="enviar()">Enviar</button>
+        </section>
+      </main>
+    </div>
 
     <script src="/static/js/toast.js"></script>
     <script src="/static/js/menuhamb.js"></script>
@@ -81,9 +79,6 @@
       const chat = document.getElementById("chat-messages");
       const input = document.getElementById("msg");
 
-      
-
-      // --- Acorda a IA assim que a página entra na tela ---
       window.onload = async function () {
         console.log("Acordando o servidor de IA em segundo plano...");
         try {
@@ -96,7 +91,6 @@
         }
       };
 
-      /* ENTER para enviar */
       input.addEventListener("keypress", function (event) {
         if (event.key === "Enter") {
           enviar();
@@ -113,16 +107,11 @@
 
       async function enviar() {
         const texto = input.value;
+        if (texto.trim() === "") return;
 
-        if (texto.trim() === "") {
-          return;
-        }
-
-        /* 1. Adiciona a mensagem do usuário na tela */
         adicionarMensagem(texto, "usuario");
         input.value = "";
 
-        /* 2. Cria e adiciona a mensagem temporária de carregamento do bot */
         const pensando = document.createElement("div");
         pensando.classList.add("mensagem", "bot");
         pensando.innerText = "🍳 Pensando...";
@@ -130,7 +119,6 @@
         chat.scrollTop = chat.scrollHeight;
 
         try {
-          /* 3. Faz a requisição para o seu back-end no Railway */
           const res = await fetch(
             "https://kitchenhubcom-production.up.railway.app/api/chat",
             {
@@ -140,18 +128,17 @@
               },
               body: JSON.stringify({
                 texto: texto,
+                usuario_id: localStorage.getItem("usuario_id") || "anonimo", // Envia o ID para o Python saber quem é quem!
               }),
             },
           );
 
           const data = await res.json();
 
-          /* 4. Trata a resposta substituindo o texto do elemento "pensando" */
           if (data.sucesso) {
             let textoFormatado = data.resposta
               .replace(/\n/g, "<br>")
               .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-
             pensando.innerHTML = textoFormatado;
           } else {
             pensando.innerText = data.erro;
@@ -161,12 +148,9 @@
             "Erro ao conectar ao servidor. Tente novamente em instantes!";
           console.log(erro);
         }
-
-        /* 5. Garante que o scroll desça após a resposta chegar */
         chat.scrollTop = chat.scrollHeight;
       }
 
-      // Função de Fallback caso o script externo exija a função global de logout
       function fazerLogout() {
         localStorage.removeItem("usuario_id");
         localStorage.removeItem("emailUsuarioLogado");

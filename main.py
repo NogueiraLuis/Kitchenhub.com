@@ -247,32 +247,51 @@ def remover_favorito(id_banco: int):
 
 # ---- ROTAS OLLAMA (IA via HuggingFace Spaces) ----
 
+HISTORICO_CONVERSAS = {}
+MAX_HISTORICO = 12
+
 @app.post("/api/chat")
 async def chat(data: dict):
-    """
-    Chat amigável e direto focado estritamente em culinária com Qwen
-    """
     try:
-        texto = data.get("texto", "")
+        texto = data.get("texto", "").strip()
+        usuario_chave = str(data.get("usuario_id", "anonimo"))
         
         if not texto:
             return {"sucesso": False, "erro": "Texto vazio"}
         
-        prompt_sistema = """Você é o KitchenHub, um assistente virtual especializado em culinária e receitas.
-Suas regras essenciais:
+        # 1. Inicializa o histórico do usuário se não existir
+        if usuario_chave not in HISTORICO_CONVERSAS:
+            HISTORICO_CONVERSAS[usuario_chave] = []
+            
+        # 2. Constrói o contexto das conversas antigas de forma bem marcada
+        contexto_passado = ""
+        for msg in HISTORICO_CONVERSAS[usuario_chave]:
+            contexto_passado += f"<|im_start|>{msg['autor']}\n{msg['conteudo']}<|im_end|>\n"
+            
+        # 3. Monta o prompt final injetando o histórico e blindando as regras do sistema
+        prompt_final = f"""<|im_start|>system
+Você é o KitchenHub, um assistente virtual experiente, amigável e focado estritamente em culinária e receitas.
+Regras:
 1. Responda APENAS sobre receitas, culinária e ingredientes.
-2. Se o usuário fugir do assunto de culinária, responda educadamente: "Desculpe, eu só sei falar sobre receitas e culinária! Como posso ajudar na sua cozinha hoje?".
-3. Seja sempre direto, amigável e responda em português do Brasil de forma corta e objetiva."""
-        
+2. Lembre-se e utilize as informações fornecidas pelo usuário ao longo do histórico da conversa abaixo para responder.
+3. Responda sempre em português do Brasil, de forma curta e direta.<|im_end|>
+{contexto_passado}<|im_start|>user
+{texto}<|im_end|>
+<|im_start|>assistant
+"""
+
+        # 4. Faz a requisição para o Ollama usando o endpoint /api/generate
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.post(
                 f"{OLLAMA_URL}/api/generate",
                 json={
                     "model": MODELO_IA,
-                    "prompt": f"{prompt_sistema}\n\nUsuário: {texto}\nAssistente:",
+                    "prompt": prompt_final,
                     "stream": False,
-                    "temperature": 0.4,
-                    "system": prompt_sistema
+                    "options": { 
+                        "temperature": 0.3,  # Menor temperatura deixa a IA mais focada nos fatos passados
+                        "top_p": 0.9
+                    }
                 }
             )
         
@@ -280,16 +299,35 @@ Suas regras essenciais:
             result = response.json()
             resposta_ia = result.get("response", "").strip()
             
-            return {
-                "sucesso": True,
-                "resposta": resposta_ia if resposta_ia else "Olá! Como posso te ajudar com suas receitas hoje?"
-            }
+            # Remove possíveis tags que o modelo menor possa autogerar por engano
+            resposta_ia = resposta_ia.replace("<|im_start|>", "").replace("<|im_end|>", "").strip()
+            
+            if resposta_ia:
+                # 5. Salva estritamente o que foi conversado na lista
+                HISTORICO_CONVERSAS[usuario_chave].append({"autor": "user", "conteudo": texto})
+                HISTORICO_CONVERSAS[usuario_chave].append({"autor": "assistant", "conteudo": resposta_ia})
+                
+                # Mantém apenas as últimas 6 mensagens (3 rodadas) para não confundir o modelo de 1.5B
+                if len(HISTORICO_CONVERSAS[usuario_chave]) > 6:
+                    HISTORICO_CONVERSAS[usuario_chave] = HISTORICO_CONVERSAS[usuario_chave][-6:]
+            else:
+                resposta_ia = "Olá! Como posso ajudar na sua cozinha hoje?"
+            
+            return {"sucesso": True, "resposta": resposta_ia}
         else:
             return {"sucesso": False, "erro": f"Erro do servidor de IA: {response.status_code}"}
             
     except Exception as e:
         print(f"Erro no chat: {e}")
         return {"sucesso": False, "erro": f"Erro interno: {str(e)}"}
+
+# Rota extra útil: Permite que você limpe o histórico caso o usuário clique em "Nova Conversa" no front-end
+@app.post("/api/chat/limpar")
+def limpar_historico(data: dict):
+    usuario_chave = str(data.get("usuario_id", "anonimo"))
+    if usuario_chave in HISTORICO_CONVERSAS:
+        del HISTORICO_CONVERSAS[usuario_chave]
+    return {"sucesso": True, "mensagem": "Histórico limpo com sucesso"}
 
 
 @app.get("/api/health-ollama")
