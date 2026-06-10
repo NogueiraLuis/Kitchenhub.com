@@ -48,6 +48,19 @@ figure img {
   display: block;
 }
 
+
+.icon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 70px;
+}
+
+.icon img {
+  max-width: auto;
+  max-height: 160px;
+}
+
 .principal p {
   font-size: 20px;
 }
