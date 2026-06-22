@@ -272,7 +272,8 @@ body {
 /* --- GRID DE RECEITAS --- */
 .recipe-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  /* Alterado o mínimo de 450px para 280px para evitar quebra em celulares */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
   padding: 0 30px 50px;
   max-width: 980px;
@@ -347,11 +348,11 @@ body {
 
 .recipe-card__info {
   padding: 10px;
-  gap: 50px;
+  gap: 15px; /* Reduzido de 50px para 15px (evita estourar a altura interna) */
   font-size: 1.1rem;
-  display: grid;
-  grid-template-rows: repeat(3, 1fr);
-  align-items: center;
+  display: flex; /* Mudado de Grid para Flex para melhor distribuição interna */
+  flex-direction: column;
+  justify-content: center;
   line-height: 1.5;
 }
 

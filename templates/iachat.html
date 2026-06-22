@@ -79,15 +79,34 @@
       const chat = document.getElementById("chat-messages");
       const input = document.getElementById("msg");
 
+      // MODIFICAÇÃO EXCLUSIVA: Carrega o histórico salvo no SQLite assim que a tela abre
       window.onload = async function () {
-        console.log("Acordando o servidor de IA em segundo plano...");
+        console.log("Acordando o servidor de IA e buscando histórico...");
+        const usuarioId = localStorage.getItem("usuario_id") || "anonimo";
+
         try {
-          await fetch(
-            "https://kthub.up.railway.app/api/health-ollama",
-          );
+          // 1. Acorda o Ollama em segundo plano
+          await fetch("https://kthub.up.railway.app/api/health-ollama");
           console.log("Servidor de IA alertado com sucesso.");
+
+          // 2. Faz a chamada GET para a nova rota que criamos no Python
+          const res = await fetch(
+            `https://kthub.up.railway.app/api/chat/historico/${usuarioId}`,
+          );
+          const data = await res.json();
+
+          if (data.sucesso && data.mensagens.length > 0) {
+            // Limpa o texto padrão inicial se já existir um histórico real no banco
+            chat.innerHTML = "";
+
+            // Reconstrói as mensagens antigas na interface
+            data.mensagens.forEach((msg) => {
+              const tipoClasse = msg.autor === "user" ? "usuario" : "bot";
+              adicionarMensagem(msg.conteudo, tipoClasse);
+            });
+          }
         } catch (e) {
-          console.log("Erro ao tentar acordar a IA em segundo plano:", e);
+          console.log("Erro ao inicializar dados ou histórico:", e);
         }
       };
 
@@ -97,10 +116,17 @@
         }
       });
 
+      // Melhoria na função: agora ela aceita formatação HTML para o histórico carregado também
       function adicionarMensagem(texto, tipo) {
         const msg = document.createElement("div");
         msg.classList.add("mensagem", tipo);
-        msg.innerText = texto;
+
+        // Formata quebras de linha e negritos de forma idêntica
+        let textoFormatado = texto
+          .replace(/\n/g, "<br>")
+          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+        msg.innerHTML = textoFormatado;
         chat.appendChild(msg);
         chat.scrollTop = chat.scrollHeight;
       }
@@ -109,6 +135,7 @@
         const texto = input.value;
         if (texto.trim() === "") return;
 
+        // Adiciona a mensagem do usuário na tela na hora
         adicionarMensagem(texto, "usuario");
         input.value = "";
 
@@ -119,19 +146,16 @@
         chat.scrollTop = chat.scrollHeight;
 
         try {
-          const res = await fetch(
-            "https://kthub.up.railway.app/api/chat",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                texto: texto,
-                usuario_id: localStorage.getItem("usuario_id") || "anonimo", // Envia o ID para o Python saber quem é quem!
-              }),
+          const res = await fetch("https://kthub.up.railway.app/api/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
             },
-          );
+            body: JSON.stringify({
+              texto: texto,
+              usuario_id: localStorage.getItem("usuario_id") || "anonimo",
+            }),
+          });
 
           const data = await res.json();
 

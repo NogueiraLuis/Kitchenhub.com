@@ -14,7 +14,6 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 # Cache global na memória do servidor para evitar chamadas duplicadas à API de tradução
 CACHE_TRADUCOES = {}
-HISTORICO_CONVERSAS = {}
 
 # ---- CONFIGURAÇÃO ----
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///receitas.db")
@@ -45,6 +44,13 @@ class ReceitaFavorita(SQLModel, table=True):
 class DadosLogin(BaseModel):
     email: str
     senha: str
+
+# ADIÇÃO CRÍTICA 1: Tabela para salvar o histórico no banco de dados SQLite
+class MensagemChat(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    usuario_id: str  # Guardamos como string para casar com o localStorage
+    autor: str       # 'user' ou 'assistant'
+    conteudo: str
 
 # ---- APP ----
 @asynccontextmanager
@@ -206,6 +212,19 @@ def remover_favorito(id_banco: int):
         return {"mensagem": "Receita removida com sucesso"}
 
 # ---- ROTAS OLLAMA (IA) ----
+
+# ADIÇÃO CRÍTICA 2: Rota GET para carregar o histórico quando o usuário abrir o chat
+@app.get("/api/chat/historico/{usuario_id}")
+def obter_historico_completo(usuario_id: str):
+    with Session(engine) as session:
+        mensagens = session.exec(
+            select(MensagemChat)
+            .where(MensagemChat.usuario_id == usuario_id)
+            .order_by(MensagemChat.id.asc())
+        ).all()
+    return {"sucesso": True, "mensagens": mensagens}
+
+# ADIÇÃO CRÍTICA 3: Rota adaptada para persistência e otimizada para o Qwen 1.5B
 @app.post("/api/chat")
 async def chat(data: dict):
     try:
@@ -215,23 +234,31 @@ async def chat(data: dict):
         if not texto:
             return {"sucesso": False, "erro": "Texto vazio"}
         
-        if usuario_chave not in HISTORICO_CONVERSAS:
-            HISTORICO_CONVERSAS[usuario_chave] = []
+        # Busca as últimas 6 mensagens desse usuário específico no banco de dados
+        with Session(engine) as session:
+            mensagens_banco = session.exec(
+                select(MensagemChat)
+                .where(MensagemChat.usuario_id == usuario_chave)
+                .order_by(MensagemChat.id.desc())
+                .limit(6)
+            ).all()
             
-        # Construção limpa do histórico em ChatML
+        # Inverte para manter a ordem cronológica correta antes de criar o prompt
+        mensagens_banco.reverse()
+            
+        # Construção limpa e estruturada do histórico em ChatML
         contexto_passado = ""
-        for msg in HISTORICO_CONVERSAS[usuario_chave]:
-            autor_tag = "user" if msg["autor"] == "user" else "assistant"
-            contexto_passado += f"<|im_start|>{autor_tag}\n{msg['conteudo']}<|im_end|>\n"
+        for msg in mensagens_banco:
+            contexto_passado += f"<|im_start|>{msg.autor}\n{msg.conteudo}<|im_end|>\n"
             
-        # Otimização do prompt do Sistema para Qwen 1.5B (Focado e sem rodeios)
+        # Prompt do Sistema simplificado focado em Culinária e Substituições (evita confusões no Qwen 1.5B)
         prompt_final = (
             "<|im_start|>system\n"
-            "Você é o Chef IA. Responda APENAS sobre culinária, substituição de ingredientes e receitas.\n"
-            "Seja direto, amigável e use português do Brasil. Se o usuário perguntar algo fora de cozinha, "
-            "diga educadamente que só entende de culinária.\n"
+            "Você é o Chef IA do KitchenHub. Seu trabalho é ajudar o usuário com receitas, dicas de culinária, substituição de ingredientes e passo a passo de pratos.\n"
+            "Aproveite o histórico abaixo para lembrar o que o usuário já te disse.\n"
+            "Seja direto, amigável e responda sempre em português do Brasil de forma curta.\n"
             "<|im_end|>\n"
-            f"{contexto_passado}"  # CORREÇÃO CRÍTICA: Histórico injetado aqui!
+            f"{contexto_passado}"
             f"<|im_start|>user\n{texto}<|im_end|>\n"
             "<|im_start|>assistant\n"
         )
@@ -254,15 +281,16 @@ async def chat(data: dict):
             resposta_ia = response.json().get("response", "").strip()
             resposta_ia = resposta_ia.replace("<|im_start|>", "").replace("<|im_end|>", "").strip()
             
-            if resposta_ia:
-                HISTORICO_CONVERSAS[usuario_chave].append({"autor": "user", "conteudo": texto})
-                HISTORICO_CONVERSAS[usuario_chave].append({"autor": "assistant", "conteudo": resposta_ia})
-                
-                # Mantém as últimas 6 mensagens (3 rodadas) para não estourar o contexto do modelo leve
-                if len(HISTORICO_CONVERSAS[usuario_chave]) > 6:
-                    HISTORICO_CONVERSAS[usuario_chave] = HISTORICO_CONVERSAS[usuario_chave][-6:]
-            else:
+            if not resposta_ia:
                 resposta_ia = "Olá! Como posso ajudar na sua cozinha hoje?"
+            
+            # Grava a conversa atual no banco de dados para a próxima requisição
+            with Session(engine) as session:
+                msg_usuario = MensagemChat(usuario_id=usuario_chave, autor="user", conteudo=texto)
+                msg_ia = MensagemChat(usuario_id=usuario_chave, autor="assistant", conteudo=resposta_ia)
+                session.add(msg_usuario)
+                session.add(msg_ia)
+                session.commit()
             
             return {"sucesso": True, "resposta": resposta_ia}
         return {"sucesso": False, "erro": f"Erro do servidor de IA: {response.status_code}"}
@@ -271,11 +299,15 @@ async def chat(data: dict):
         print(f"Erro no chat: {e}")
         return {"sucesso": False, "erro": f"Erro interno: {str(e)}"}
 
+# ADIÇÃO CRÍTICA 4: Rota de limpar histórico atualizada para expurgar as mensagens do banco
 @app.post("/api/chat/limpar")
 def limpar_historico(data: dict):
     usuario_chave = str(data.get("usuario_id", "anonimo"))
-    if usuario_chave in HISTORICO_CONVERSAS:
-        del HISTORICO_CONVERSAS[usuario_chave]
+    with Session(engine) as session:
+        mensagens = session.exec(select(MensagemChat).where(MensagemChat.usuario_id == usuario_chave)).all()
+        for msg in mensagens:
+            session.delete(msg)
+        session.commit()
     return {"sucesso": True, "mensagem": "Histórico limpo com sucesso"}
 
 @app.get("/api/health-ollama")
@@ -293,8 +325,6 @@ async def health_ollama():
 @app.get("/api/gerar-receita-ia/{ingredientes}")
 async def gerar_receita_ia(ingredientes: str):
     try:
-        # Array estruturado para a API de Chat. 
-        # Fornecemos um exemplo exato (Few-Shot) para o modelo imitar.
         mensagens = [
             {
                 "role": "system",
@@ -316,14 +346,14 @@ async def gerar_receita_ia(ingredientes: str):
 
         async with httpx.AsyncClient(timeout=90) as client:
             response = await client.post(
-                f"{OLLAMA_URL}/api/chat", # Usando /chat em vez de /generate
+                f"{OLLAMA_URL}/api/chat",
                 json={
                     "model": MODELO_IA,
                     "messages": mensagens,
-                    "format": "json", # Força o Ollama a aceitar apenas sintaxe JSON
+                    "format": "json",
                     "stream": False,
                     "options": {
-                        "temperature": 0.1 # Quase zero para máxima previsibilidade
+                        "temperature": 0.1
                     }
                 }
             )
@@ -331,7 +361,6 @@ async def gerar_receita_ia(ingredientes: str):
         if response.status_code == 200:
             resposta_bruta = response.json().get("message", {}).get("content", "").strip()
             
-            # Validação extra de segurança para garantir que é um JSON válido
             try:
                 receita_json = json.loads(resposta_bruta)
                 return {"sucesso": True, "receita": receita_json, "modelo": MODELO_IA}

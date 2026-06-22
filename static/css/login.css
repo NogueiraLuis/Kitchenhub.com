@@ -51,7 +51,7 @@ form {
 }
 
 input {
-  width: 80%;
+  width: 85%; 
   max-width: 350px;
   border: none;
   margin: 8px;
@@ -70,11 +70,12 @@ span {
 }
 
 button {
-  margin-top: 15px; /* Aumentado levemente para desgrudar do último input */
-  width: 50%;
+  margin-top: 15px;
+  width: 85%;
+  max-width: 350px;
   border-radius: 10px;
   border: none;
-  padding: 10px; /* Aumentado o padding para o botão ficar mais robusto e bonito */
+  padding: 12px;
   cursor: pointer;
   font-weight: bold;
 }

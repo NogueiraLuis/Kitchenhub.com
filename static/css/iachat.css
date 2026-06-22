@@ -130,15 +130,16 @@ main {
   border-bottom-right-radius: 5px;
 }
 
-/* área input */
+/* --- ÁREA INPUT CORRIGIDA --- */
 section {
-  padding: 20px;
+  padding: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-top: 1px solid #3a3a3a;
   background-color: rgba(20, 20, 20, 0.8);
   width: 100%;
+  gap: 10px;
 }
 
 input {
@@ -152,7 +153,6 @@ input {
   color: white;
   padding: 0 20px;
   font-size: 16px;
-  margin-right: 10px;
 }
 
 input:focus {
