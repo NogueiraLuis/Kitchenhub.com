@@ -127,6 +127,7 @@ Utilizado para armazenar:
 * Procfile (deploy em plataforma cloud)
 * Git
 * GitHub
+* Railway
 
 ---
 
@@ -165,3 +166,7 @@ Durante o desenvolvimento foram aplicados conhecimentos de:
 ## Objetivo Acadêmico
 
 O projeto tem como objetivo demonstrar a aplicação prática dos conhecimentos adquiridos em desenvolvimento web, banco de dados, integração de APIs e Inteligência Artificial, oferecendo aos usuários uma plataforma para gerenciamento de receitas culinárias personalizadas.
+
+## link do site publicado!
+
+https://kthub.up.railway.app
