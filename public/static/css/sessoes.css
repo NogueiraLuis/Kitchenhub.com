@@ -1,128 +1,222 @@
-@import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg: #17130f;
+  --text: #f5f1ec;
+  --muted: #a99e93;
+  --primary: #ff6a3d;
+  --border: rgba(255, 255, 255, 0.12);
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
 
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: "Lobster", sans-serif;
-  font-weight: 400;
-  font-style: normal;
 }
 
-main {
-  display: flex;
-  height: 100vh;
-  background-color: white;
-  gap: 1px;
-  padding: 1px;
-  box-sizing: border-box;
+html {
+  background-color: var(--bg);
 }
 
 body {
-  overflow-x: hidden;
-  overflow-y: hidden;
-}
-
-[class^="card-"] {
-  flex: 1; /* Todas começam com peso 1 (iguais) */
+  min-height: 100vh;
   display: flex;
-  align-items: center; /* Centraliza o texto verticalmente */
-  justify-content: center; /* Centraliza o texto horizontalmente */
-  background-color: white;
-  border: 2px solid black;
-  transition:
-    flex 0.5s ease,
-    background-color 0.5s ease; /* Transição suave no flex */
-  overflow: hidden; /* Impede que o texto quebre o layout ao diminuir */
-  white-space: nowrap; /* Mantém o texto em uma linha só */
+  flex-direction: column;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
 }
 
-/* Quando passar o mouse em QUALQUER faixa */
-[class^="card-"]:hover {
-  flex: 3; /* Aumenta o peso desta faixa para 3 */
-  background-color: #f0f0f0;
+/* --- HEADER --- */
+.sessoes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px clamp(18px, 4vw, 48px);
+  border-bottom: 1px solid var(--border);
 }
 
-.imagem1 {
-  object-fit: cover;
-  object-position: center;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.brand img {
+  height: 36px;
+}
+
+.brand span {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.sessoes-header nav {
+  display: flex;
+  gap: 6px;
+}
+
+.sessoes-header nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 9px 14px;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+.sessoes-header nav a:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* --- INTRO --- */
+.sessoes-intro {
+  text-align: center;
+  padding: clamp(28px, 5vw, 48px) 20px 8px;
+}
+
+.sessoes-intro h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+}
+
+.sessoes-intro p {
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+/* --- FAIXAS DE CATEGORIA --- */
+main {
+  display: flex;
+  flex: 1;
+  gap: 14px;
+  padding: clamp(20px, 4vw, 40px);
+  box-sizing: border-box;
+}
+
+.card-section {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid var(--border);
+  transition: flex 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.card-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.25) 55%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  transition: background 0.5s ease;
+}
+
+.card-section:hover,
+.card-section:focus-visible {
+  flex: 2.6;
+  outline: none;
+}
+
+.card-section:hover::before,
+.card-section:focus-visible::before {
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(255, 106, 61, 0.35) 100%
+  );
+}
+
+.card-overlay {
+  position: relative;
+  z-index: 1;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-overlay span {
+  font-family: var(--font-display);
+  color: #fff;
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  font-weight: 600;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+.card-overlay small {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 0.4s ease;
+}
+
+.card-section:hover .card-overlay small,
+.card-section:focus-visible .card-overlay small {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 #japonesa {
   background-image: url("/assets/sushi.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(0px);
-  border: 3px solid;
-  transform: scale(1.1);
-  cursor: pointer;
-  font-family: "Lobster", sans-serif;
-  font-weight: 400;
-  font-style: normal;
 }
 #massa {
   background-image: url("/assets/sectionmass.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(0px);
-  border: 3px solid;
-  transform: scale(1.1);
-  cursor: pointer;
 }
 #pizza {
   background-image: url("/assets/freshly-baked-gourmet-pizza-rustic-wood-table-generated-by-ai.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(0px);
-  border: 3px solid;
-  transform: scale(1.1);
-  cursor: pointer;
-  transition: 1s;
 }
 #sobremesa {
   background-image: url("/assets/pudim-de-leite.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: blur(0px);
-  border: 3px solid;
-  transform: scale(1.1);
-  cursor: pointer;
-}
-span {
-  color: white;
-  font-size: 70px;
-  font-weight: 400;
-  transition: 2s;
-  -webkit-text-stroke-width: 2px; /* Espessura da borda */
-  -webkit-text-stroke-color: black; /* Cor da borda */
 }
 
-/* Media Querie para Celulares (telas até 768px) */
+/* --- MOBILE --- */
 @media (max-width: 768px) {
   main {
-    flex-direction: column; /* Empilha as faixas verticalmente */
-    height: 100vh; /* Mantém a altura total da tela */
+    flex-direction: column;
+    gap: 12px;
   }
 
-  [class^="card-"] {
-    width: 100%; /* Garante que ocupem toda a largura */
-    flex: 1;
-    white-space: normal; /* Permite que o texto quebre linha se necessário */
-    text-align: center;
+  .card-section {
+    min-height: 130px;
+    align-items: flex-end;
   }
 
-  /* Ajuste do efeito de expansão para o toque (opcional) */
-  [class^="card-"]:hover,
-  [class^="card-"]:active {
-    flex: 2; /* No mobile, uma expansão de 3 pode ser exagerada, 2 fica mais elegante */
+  .card-section:hover,
+  .card-section:focus-visible {
+    flex: 1.6;
   }
 
-  span {
-    font-size: 30px; /* Reduz o tamanho da fonte para não estourar no celular */
-    padding: 10px;
+  .card-overlay small {
+    opacity: 1;
+    transform: none;
+  }
+
+  .sessoes-header nav a span,
+  .sessoes-header nav a {
+    font-size: 0.85rem;
   }
 }

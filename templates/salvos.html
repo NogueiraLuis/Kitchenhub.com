@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17130f" />
 
     <link rel="stylesheet" href="/static/css/toast.css" />
 
@@ -39,18 +40,13 @@
             &times;
           </button>
           <ul class="nav-links">
-            <li><a href="sessoes.html">Sessões</a></li>
-            <li><a href="login.html">Login</a></li>
-            <li><a href="index.html">Menu Principal</a></li>
-            <li><a href="iachat.html">ChefIA</a></li>
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Menu Principal</a></li>
+            <li><a href="sessoes.html"><i class="fa-solid fa-utensils"></i> Sessões</a></li>
+            <li><a href="salvos.html"><i class="fa-regular fa-bookmark"></i> Livro de Receitas</a></li>
+            <li><a href="iachat.html"><i class="fa-solid fa-wand-magic-sparkles"></i> Chef IA</a></li>
+            <li><a href="login.html"><i class="fa-solid fa-right-to-bracket"></i> Login</a></li>
             <li>
-              <a href="salvos.html"
-                >Livro de Receitas
-                <i class="fa fa-bookmark" aria-hidden="true"></i
-              ></a>
-            </li>
-            <li>
-              <a href="#" onclick="fazerLogout()" style="color: #e74c3c"
+              <a href="#" onclick="fazerLogout()" style="color: #e5484d"
                 >Sair <i class="fa-solid fa-right-from-bracket"></i
               ></a>
             </li>
@@ -60,18 +56,13 @@
     </header>
 
     <main>
+      <h1>Meu Livro de Receitas</h1>
       <nav class="nav">
+        <button class="bt-todas" onclick="filtrarCategoria('todas')">Todas</button>
         <button class="bt1" onclick="filtrarCategoria(3)">Japonesas</button>
         <button class="bt2" onclick="filtrarCategoria(1)">Massas</button>
         <button class="bt3" onclick="filtrarCategoria(4)">Pizzas</button>
         <button class="bt4" onclick="filtrarCategoria(2)">Sobremesas</button>
-        <button
-          class="bt-todas"
-          onclick="filtrarCategoria('todas')"
-          style="background-color: #34495e; color: white"
-        >
-          Todas
-        </button>
       </nav>
 
       <section class="categorias recipe-grid" id="recipe-grid"></section>

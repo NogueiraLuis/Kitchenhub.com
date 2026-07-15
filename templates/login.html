@@ -3,25 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17130f" />
     <link rel="stylesheet" href="/static/css/login.css" />
-    <link rel="stylesheet" href="/static/css/toast.css">
+    <link rel="stylesheet" href="/static/css/toast.css" />
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon" />
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <title>Login | KitchenHub</title>
   </head>
   <body>
-    
     <div id="toast-container" class="toast-container"></div>
 
+    <a href="index.html" class="voltar-home">
+      <i class="fa-solid fa-arrow-left"></i> Início
+    </a>
+
     <main>
-      <div class="login">
+      <div class="login auth-card">
         <img src="/assets/KitchenHub.png" alt="Logo KitchenHub" />
+        <h1>Bem-vindo de volta</h1>
+        <p class="auth-sub">Entre para acessar seu livro de receitas</p>
 
         <form id="form-login">
-          <input type="text" id="log-email" placeholder="User" required />
-          <input type="password" id="log-senha" placeholder="Senha" required />
+          <label class="field">
+            <i class="fa-regular fa-user"></i>
+            <input type="text" id="log-email" placeholder="Usuário" required />
+          </label>
+          <label class="field">
+            <i class="fa-solid fa-lock"></i>
+            <input
+              type="password"
+              id="log-senha"
+              placeholder="Senha"
+              required
+            />
+          </label>
           <button type="submit">Entrar</button>
         </form>
 
@@ -30,19 +48,33 @@
         </div>
       </div>
 
-      <div id="cadastro" style="display: none;">
+      <div id="cadastro" class="auth-card">
         <img src="/assets/KitchenHub.png" alt="Logo KitchenHub" />
+        <h1>Crie sua conta</h1>
+        <p class="auth-sub">Comece a montar seu livro de receitas</p>
 
         <form id="form-cadastro">
-          <span>Crie seu usuário aqui:</span>
-          <input type="text" id="cad-email" placeholder="User" required />
-          
-          <span>Crie sua senha aqui:</span>
-          <input type="password" id="cad-senha" placeholder="Senha" required />
-          
+          <label class="field">
+            <i class="fa-regular fa-user"></i>
+            <input
+              type="text"
+              id="cad-email"
+              placeholder="Escolha um usuário"
+              required
+            />
+          </label>
+          <label class="field">
+            <i class="fa-solid fa-lock"></i>
+            <input
+              type="password"
+              id="cad-senha"
+              placeholder="Crie uma senha"
+              required
+            />
+          </label>
           <button type="submit">Cadastrar</button>
         </form>
-        
+
         <div id="backtologin">
           <p>Já tem conta? <a id="voltar-login" href="#">Faça login</a></p>
         </div>

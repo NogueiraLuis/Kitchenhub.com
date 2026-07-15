@@ -3,110 +3,93 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="KitchenHub - Reúna suas receitas favoritas em um só lugar, descubra pratos incríveis e conte com a nossa Chef IA para dicas de cozinha."
+    />
+    <meta name="theme-color" content="#17130f" />
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon" />
-    <title>KitchenHub</title>
+    <title>KitchenHub - Monte seu livro de receitas</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <link rel="stylesheet" href="/static/css/style.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
-    <header>
-      <h1>Monte Seu Livro de Receitas!</h1>
+    <header class="site-header">
+      <a href="index.html" class="brand">
+        <img src="/assets/logo.png" alt="Logo KitchenHub" />
+        <span>KitchenHub</span>
+      </a>
+      <nav class="site-nav" aria-label="Navegação principal">
+        <a href="sessoes.html">Receitas</a>
+        <a href="iachat.html">Chef IA</a>
+        <a href="login.html" class="btn-ghost">Entrar</a>
+      </nav>
     </header>
 
     <main>
-      <section class="principal">
-        <figure>
-          <img src="/assets/KitchenHub.png" alt="Logo KitchenHub" />
+      <section class="hero">
+        <div class="hero__copy">
+          <span class="eyebrow">Seu livro de receitas inteligente</span>
+          <h1>Monte seu livro de receitas favoritas</h1>
+          <p>
+            Reúna todos os seus pratos preferidos em um só lugar. Explore
+            centenas de receitas, salve as que mais gostar e receba dicas da
+            nossa Chef IA sempre que precisar.
+          </p>
+          <div class="hero__actions">
+            <a href="sessoes.html" class="btn-primary">
+              <i class="fa-solid fa-utensils"></i>
+              Explorar receitas
+            </a>
+            <a href="login.html" class="btn-secondary">Já tenho conta</a>
+          </div>
+        </div>
+        <figure class="hero__media">
+          <img src="/assets/KitchenHub.png" alt="Ilustração do KitchenHub" />
         </figure>
-        <p>
-          Tenha suas receitas favoritas reunidas em um só lugar! Para começar o
-          seu, basta clicar no botão abaixo e encontrar inúmeros pratos! Ao
-          gostar de algum, é só abrir a página da receita e clicar em salvar!
-        </p>
-
-        <a href="sessoes.html">
-          <button>Encontre receitas e salve no seu livro</button>
-        </a>
-
-        <p>
-          Já tem seu livro de receitas? <a href="login.html">Faça seu login!</a>
-        </p>
       </section>
 
-      <section class="complementar">
-        <div class="info">
-          <ul class="sobre--instrucoes">
-            <li>
-              <div class="icon">
-                <div class="about__instructions__list__icon">
-                  <svg
-                    width="72"
-                    height="72"
-                    viewBox="0 0 72 72"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="36" cy="36" r="36" fill="#FF7F50"></circle>
-                    <path
-                      d="M45.8753 18.4225H25.9557C23.7646 18.4225 21.9918 20.1971 21.9918 22.3661L21.9718 53.9154L35.9155 48L49.8592 53.9154V22.3661C49.8592 20.1971 48.0664 18.4225 45.8753 18.4225Z"
-                      fill="white"
-                    ></path>
-                  </svg>
-                </div>
-              </div>
-              <div class="info-text">
-                <h3>Salve suas receitas preferidas</h3>
-                <p>
-                  Na página da receita, clique no botão "salvar receita" e ela
-                  aparecerá no seu Livro de Receitas.
-                </p>
-              </div>
-            </li>
-            <li>
-              <div class="about__instructions__list__icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 426 426"
-                  width="72"
-                  height="72"
-                >
-                  <defs></defs>
-                  <g fill="none" fill-rule="evenodd">
-                    <mask id="circular-mask" fill="#fff">
-                      <circle cx="213" cy="213" r="213"></circle>
-                    </mask>
-                    <circle cx="213" cy="213" r="213" fill="#FF7F50"></circle>
-                    <g mask="url(#circular-mask)">
-                      <path
-                        fill="#FFFFFF"
-                        d="M211.685 62c-11.439 3.502-19.465 11.205-20.054 27.132-.538 14.586 11.798 25.756 19.832 47.093 2.663 7.074 11.505 46.004 11.505 46.004s-51.983 2.375-71.585 2.793c-19.597.42-32.639 6.076-40.466 14.8-7.835 8.72 0 22.718 0 22.718s-12.874 10.007-13.85 20.506c-.974 10.503 8.873 16.91 8.873 16.91s-9.083 8.994-6.314 19.492c2.765 10.503 15.947 13.3 15.947 13.3s-9.418 7.593-6.048 18.497c3.365 10.9 18.704 17.261 58.605 23.322 39.9 6.06 72.848-5.011 113.334-6.509 15.896-.585 131.73 36.683 131.73 36.683l12.605-118.31s-101.638-23.236-123.182-46.5C273.126 168.08 218.385 76.7 211.685 62"
-                      ></path>
-                    </g>
-                  </g>
-                </svg>
-              </div>
-              <div class="info-text">
-                <h3>Acesso rápido</h3>
-                <p>
-                  Encontre de forma fácil e rápida as suas receitas. Basta ir em
-                  Menu > Livro de Receitas.
-                </p>
-              </div>
-            </li>
-            <li>
-              <div class="icon">
-                <img src="/assets/Untitled design.png" alt="" />
-              </div>
-              <div class="info-text">
-                <h3>Use nossa Chef IA</h3>
-                <p>
-                  Na página da receita, clique no botão "ChefIA" e receba dicas, ingredientes para substituir, sugestões de pratos semelhantes e muito mais!
-                </p>
-              </div>
-            </li>
-          </ul>
-        </div>
+      <section class="features" aria-label="Como funciona">
+        <article class="feature-card">
+          <div class="feature-card__icon">
+            <i class="fa-regular fa-bookmark"></i>
+          </div>
+          <h3>Salve suas preferidas</h3>
+          <p>
+            Na página da receita, toque em "Salvar" e ela aparece na hora no seu
+            livro de receitas pessoal.
+          </p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-card__icon">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <h3>Acesso rápido</h3>
+          <p>
+            Encontre seus pratos favoritos de forma simples e rápida em Menu
+            &gt; Livro de Receitas.
+          </p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-card__icon">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <h3>Converse com a Chef IA</h3>
+          <p>
+            Peça dicas, substituições de ingredientes e sugestões de pratos
+            semelhantes com a nossa assistente de cozinha.
+          </p>
+        </article>
       </section>
     </main>
+
+    <footer class="site-footer">
+      <p>KitchenHub &middot; Feito para quem ama cozinhar</p>
+    </footer>
   </body>
 </html>

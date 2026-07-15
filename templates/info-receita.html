@@ -3,21 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17130f" />
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon" />
     <link
       rel="stylesheet"
-      href="https://cdn-uicons.flaticon.com/4.0.0/uicons-thin-rounded/css/uicons-thin-rounded.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <link rel="stylesheet" href="/static/css/info-receita.css" />
     <title>Receita | KitchenHub</title>
   </head>
   <body>
     <header>
-      <nav class="back">
-        <a href="receitas.html"><i class="fi fi-tr-exit"></i></a>
-      </nav>
-      <h1>Voltar</h1>
+      <a href="receitas.html" class="back">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Voltar</span>
+      </a>
     </header>
+
     <main id="detalhe-receita">
       <article class="recipe-card">
         <section class="recipe-header">
@@ -25,18 +27,19 @@
             <img id="recipe-image" src="" alt="Foto da receita finalizada" />
           </figure>
           <div class="recipe-meta">
+            <span class="recipe-badge">Receita</span>
             <h1 id="recipe-title">Carregando...</h1>
           </div>
         </section>
 
         <div class="recipe-content">
           <section class="ingredientes">
-            <h2>Ingredientes</h2>
+            <h2><i class="fa-solid fa-basket-shopping"></i> Ingredientes</h2>
             <ul id="ingredients-list"></ul>
           </section>
 
           <section class="preparo">
-            <h2>Modo de Preparo</h2>
+            <h2><i class="fa-solid fa-fire-burner"></i> Modo de Preparo</h2>
             <div id="recipe-instructions" class="instructions-body"></div>
           </section>
         </div>
