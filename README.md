@@ -97,7 +97,8 @@ Utilizado para armazenar:
 
 ### Banco de Dados
 
-* SQLite
+* SQLite (desenvolvimento local)
+* PostgreSQL via Neon (produção)
 
 ### Integrações e APIs
 
@@ -123,11 +124,9 @@ Utilizado para armazenar:
 
 ### Infraestrutura e Deploy
 
-* Docker
-* Procfile (deploy em plataforma cloud)
+* Vercel (Functions com runtime Python)
 * Git
 * GitHub
-* Railway
 
 ---
 
@@ -169,4 +168,4 @@ O projeto tem como objetivo demonstrar a aplicação prática dos conhecimentos 
 
 ## link do site publicado!
 
-https://kthub.up.railway.app
+_Atualize este link com a URL gerada pela Vercel após o deploy._

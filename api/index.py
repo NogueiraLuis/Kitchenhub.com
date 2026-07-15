@@ -2,21 +2,28 @@ import os
 import json
 import asyncio
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import List, Optional
 import httpx
 from deep_translator import GoogleTranslator
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlmodel import Field, Session, SQLModel, create_engine, select
+
+# Diretório raiz do projeto (este arquivo vive em api/, então subimos um nível)
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Cache global na memória do servidor para evitar chamadas duplicadas à API de tradução
 CACHE_TRADUCOES = {}
 
 # ---- CONFIGURAÇÃO ----
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///receitas.db")
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'receitas.db'}")
+# Neon/Vercel Postgres costuma fornecer a URL como "postgres://", mas o
+# SQLAlchemy exige o prefixo "postgresql://"
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 PORT = int(os.getenv("PORT", 8000))
 OLLAMA_URL = os.getenv("OLLAMA_URL", "https://vxzs-ollama-api.hf.space")
 MODELO_IA = "qwen2.5:1.5b"
@@ -68,20 +75,22 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+# Observação: /static e /assets NÃO são mais montados aqui. Esses arquivos
+# vivem em public/static e public/assets, e a Vercel os serve automaticamente
+# pela CDN nesses mesmos caminhos (/static/... e /assets/...) sem passar por
+# esta função. Isso também é o que torna o carregamento mais rápido.
 
 # ---- ROTAS HTML ----
-TEMPLATES_DIR = "templates"
+TEMPLATES_DIR = BASE_DIR / "templates"
 
 @app.get("/")
 def index():
-    return FileResponse(f"{TEMPLATES_DIR}/index.html")
+    return FileResponse(TEMPLATES_DIR / "index.html")
 
 @app.get("/{page}.html")
 def serve_page(page: str):
-    path = f"{TEMPLATES_DIR}/{page}.html"
-    if not os.path.isfile(path):
+    path = TEMPLATES_DIR / f"{page}.html"
+    if not path.is_file():
         raise HTTPException(status_code=404, detail="Página não encontrada")
     return FileResponse(path)
 

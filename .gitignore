@@ -8,3 +8,4 @@ venv/
 *.db-wal
 .env
 .vscode/
+.vercel
