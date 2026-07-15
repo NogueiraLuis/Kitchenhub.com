@@ -1,103 +1,195 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --bg: #17130f;
+  --primary: #ff6a3d;
+  --primary-hover: #ff835c;
+  --text: #f5f1ec;
+  --muted: #a99e93;
+  --border: rgba(255, 255, 255, 0.12);
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
 
+html {
+  background-color: var(--bg);
+}
+
 main {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #152331;
-  background: -webkit-linear-gradient(to right, #000000, #152331);
-  background: linear-gradient(to right, #000000, #152331);
+  padding: 24px;
+  font-family: var(--font-body);
+  background:
+    radial-gradient(900px 500px at 85% 0%, rgba(255, 106, 61, 0.2), transparent 60%),
+    radial-gradient(700px 500px at 0% 100%, rgba(245, 166, 35, 0.12), transparent 55%),
+    var(--bg);
 }
 
-/* Ajuste nos containers para abrigar os forms */
-.login, #cadastro {
+.voltar-home {
+  position: fixed;
+  top: 22px;
+  left: 24px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-weight: 500;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  transition: all 0.25s ease;
+}
+
+.voltar-home:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Cartão de autenticação */
+.auth-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 90%;
-  max-width: 500px;
-  padding: 40px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background-color: rgba(152, 152, 152, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  backdrop-filter: blur(30px);
-  border-radius: 30px;
+  width: 100%;
+  max-width: 420px;
+  padding: 44px 36px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 24px;
+  color: var(--text);
 }
 
-/* O #cadastro começa escondido no HTML */
+/* O #cadastro começa escondido; o login.js alterna para flex */
 #cadastro {
-  display: none; 
+  display: none;
 }
 
-img {
-  width: 60%;
+.auth-card img {
+  width: 55%;
   height: auto;
-  max-width: 300px;
-  object-fit: cover;
-  margin-bottom: 15px; /* Espaço embaixo da logo */
+  max-width: 220px;
+  object-fit: contain;
+  margin-bottom: 18px;
 }
 
-/* REGRA NOVA: Faz o formulário alinhar os inputs verticalmente */
+.auth-card h1 {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.auth-sub {
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-align: center;
+  margin-top: 6px;
+  margin-bottom: 28px;
+}
+
 form {
   width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 14px;
+}
+
+/* Campo de input com ícone */
+.field {
+  display: flex;
   align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 14px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.field:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(255, 106, 61, 0.15);
+}
+
+.field i {
+  color: var(--muted);
+  font-size: 1rem;
 }
 
 input {
-  width: 85%; 
-  max-width: 350px;
+  flex: 1;
   border: none;
-  margin: 8px;
-  padding: 12px;
-  border-radius: 10px;
+  background: transparent;
+  padding: 15px 0;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+input::placeholder {
+  color: var(--muted);
 }
 
 input:focus {
   outline: none;
 }
 
-span {
-  color: #e0e0e0;
+button[type="submit"] {
   margin-top: 8px;
-  align-self: center; /* Centraliza os textos do cadastro */
-}
-
-button {
-  margin-top: 15px;
-  width: 85%;
-  max-width: 350px;
-  border-radius: 10px;
+  width: 100%;
+  border-radius: 14px;
   border: none;
-  padding: 12px;
+  padding: 15px;
   cursor: pointer;
-  font-weight: bold;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1a1109;
+  background: var(--primary);
+  box-shadow: 0 12px 30px rgba(255, 106, 61, 0.35);
+  transition: all 0.25s ease;
 }
 
-button:hover {
-  background-color: #cecece;
-  transform: scale(1.01);
+button[type="submit"]:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
 }
 
-.cadastrar, #backtologin {
+.cadastrar,
+#backtologin {
   display: flex;
-  margin-top: 20px;
-  color: #e0e0e0;
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 0.95rem;
 }
 
-.cadastrar a, #voltar-login {
+.cadastrar a,
+#voltar-login {
   text-decoration: none;
-  color: #ff7f50;
-  margin-left: 5px; /* Dá um espacinho do texto anterior */
+  color: var(--primary);
+  font-weight: 600;
+  margin-left: 6px;
 }
 
-.cadastrar a:hover, #voltar-login:hover {
-  color: red;
+.cadastrar a:hover,
+#voltar-login:hover {
+  color: var(--primary-hover);
   text-decoration: underline;
 }

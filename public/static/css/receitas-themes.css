@@ -1,6 +1,19 @@
-@import url("https://fonts.googleapis.com/css2?family=Lobster&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
 
-/* 2. Reset Moderno */
+/* 1. Variáveis */
+:root {
+  --bg-color: #17130f;
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --text-white: #f5f1ec;
+  --muted: #cbc1b6;
+  --primary: #ff6a3d;
+  --transition-default: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-logo: "Fraunces", Georgia, serif;
+  --font-main: "Inter", system-ui, -apple-system, sans-serif;
+  /* accent padrão da categoria (sobrescrito por tema) */
+  --cat: #ff6a3d;
+}
 
 * {
   padding: 0;
@@ -8,136 +21,8 @@
   box-sizing: border-box;
 }
 
-/* Estilo Padrão */
-
-main {
-  transition: background 0.2s ease;
-}
-
-/* --- TEMA JAPONESA --- */
-
-#japonesa {
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-    url("/assets/sushibkg.jpg");
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  min-height: 100vh;
-}
-#japonesa .section-title {
-  color: #e0e0e0;
-}
-
-#japonesa .recipe-card {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-#japonesa .nav-links a:hover {
-  background: rgba(255, 6, 6, 0.329);
-}
-
-#japonesa .salvar_receita {
-  background-color: rgba(171, 24, 24, 0.819);
-  color: #e0e0e0;
-}
-
-/* --- TEMA MASSAS --- */
-
-#massa {
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-    url("/assets/macarraobkg.jpg");
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  min-height: 100vh;
-}
-#massa .section-title {
-  color: #f1b40cdb;
-}
-
-#massa .recipe-card {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-#massa .nav-links a:hover {
-  background: rgba(255, 147, 6, 0.329);
-}
-
-#massa .salvar_receita {
-  background-color: rgba(255, 118, 7, 0.819);
-  color: #e0e0e0;
-}
-
-/* --- TEMA PIZZAS --- */
-
-#pizza {
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-    url("/assets/freshly-baked-gourmet-pizza-rustic-wood-table-generated-by-ai.jpg");
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  min-height: 100vh;
-}
-
-#pizza .recipe-card {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-#pizza .nav-links a:hover {
-  background: rgba(6, 255, 102, 0.329);
-}
-
-#pizza .section-title {
-  color: rgba(5, 204, 38, 0.783);
-}
-
-#pizza .salvar_receita {
-  background-color: rgba(8, 157, 35, 0.819);
-  color: #e0e0e0;
-}
-
-/* --- TEMA SOBREMESAS --- */
-#sobremesa {
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-    url("/assets/sobremesabkg.jpg");
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  min-height: 100vh;
-}
-
-#sobremesa .recipe-card {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-#sobremesa .nav-links a:hover {
-  background: rgba(255, 6, 214, 0.329);
-}
-
-#sobremesa .section-title {
-  color: rgba(197, 5, 204, 0.783);
-}
-
-#sobremesa .salvar_receita {
-  background-color: rgba(171, 24, 144, 0.674);
-  color: #e0e0e0;
-}
-
-/* 1. Definição de Variáveis */
-:root {
-  --bg-nav-dark: rgba(19, 13, 20, 0.192);
-  --bg-color: #000000c4;
-  --card-bg: rgba(105, 41, 76, 0.6);
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --text-white: #e0e0e0;
-  --effect: #b3acb1;
-  --transition-default: 0.4s cubic-bezier(0.77, 0.2, 0.05, 1);
-  --font-logo: "Lobster", sans-serif;
-  --font-main: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+html {
+  background-color: var(--bg-color);
 }
 
 body {
@@ -150,32 +35,110 @@ body {
   flex-direction: column;
 }
 
+main {
+  transition: background 0.3s ease;
+}
+
+/* --- TEMAS POR CATEGORIA --- */
+#japonesa,
+#massa,
+#pizza,
+#sobremesa {
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  min-height: 100vh;
+}
+
+#japonesa {
+  --cat: #ff5a5f;
+  background:
+    linear-gradient(rgba(15, 10, 8, 0.82), rgba(15, 10, 8, 0.9)),
+    url("/assets/sushibkg.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+#massa {
+  --cat: #f5a623;
+  background:
+    linear-gradient(rgba(15, 10, 8, 0.8), rgba(15, 10, 8, 0.9)),
+    url("/assets/macarraobkg.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+#pizza {
+  --cat: #4caf6a;
+  background:
+    linear-gradient(rgba(15, 10, 8, 0.82), rgba(15, 10, 8, 0.9)),
+    url("/assets/freshly-baked-gourmet-pizza-rustic-wood-table-generated-by-ai.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+#sobremesa {
+  --cat: #e05299;
+  background:
+    linear-gradient(rgba(15, 10, 8, 0.82), rgba(15, 10, 8, 0.9)),
+    url("/assets/sobremesabkg.jpg");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+.section-title {
+  color: var(--cat);
+}
+
+.nav-links a:hover {
+  background: color-mix(in srgb, var(--cat) 22%, transparent);
+}
+
+.salvar_receita {
+  background-color: var(--cat);
+  color: #17130f;
+}
+
 /* --- HEADER --- */
 .main-header {
   position: fixed;
   z-index: 998;
-  height: 80px;
+  height: 74px;
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 0 20px 0 80px;
-  background: var(--bg-nav-dark);
+  padding: 0 24px 0 84px;
+  background: rgba(23, 19, 15, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 14px;
 }
 
 .logo-container img {
-  height: 60px;
+  height: 46px;
 }
 
 .brand-name {
   font-family: var(--font-logo);
-  font-weight: 100;
-  font-size: 2rem;
+  font-weight: 600;
+  font-size: 1.6rem;
+}
+
+.user-email-topo {
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  color: var(--muted);
+  font-weight: 500;
 }
 
 /* --- MENU LATERAL (VIDRO) --- */
@@ -187,11 +150,11 @@ body {
   background: var(--glass-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   color: white;
-  font-size: 24px;
-  padding: 10px;
-  border-radius: 8px;
+  font-size: 22px;
+  padding: 10px 13px;
+  border-radius: 12px;
   cursor: pointer;
   transition: var(--transition-default);
 }
@@ -203,14 +166,14 @@ body {
 .side-menu {
   position: fixed;
   top: 0;
-  left: -320px;
+  left: -340px;
   width: 300px;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 100px 30px;
+  background: rgba(18, 14, 11, 0.85);
+  backdrop-filter: blur(26px);
+  -webkit-backdrop-filter: blur(26px);
+  border-right: 1px solid var(--glass-border);
+  padding: 100px 26px;
   transition: var(--transition-default);
   z-index: 1000;
 }
@@ -221,12 +184,12 @@ body {
 
 .btn-close {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 18px;
+  right: 22px;
   background: none;
   border: none;
   color: white;
-  font-size: 35px;
+  font-size: 34px;
   cursor: pointer;
   line-height: 1;
 }
@@ -235,228 +198,252 @@ body {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .nav-links a {
-  display: block;
-  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-white);
   text-decoration: none;
-  font-size: 1.3rem;
-  padding: 15px;
-  border-radius: 10px;
-  transition: 0.3s;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 14px 16px;
+  border-radius: 12px;
+  transition: var(--transition-default);
 }
 
 .nav-links a:hover {
-  background: var(--glass-bg);
-  transform: translateX(10px);
+  transform: translateX(6px);
 }
 
-/* --- ÁREA DE BUSCA --- */
-.title-section{
-  padding: 60px 20px;
+/* --- TÍTULO DA SEÇÃO --- */
+.title-section {
+  padding: 120px 20px 30px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 16px;
 }
 
 .section-title {
   font-family: var(--font-logo);
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  font-weight: 100;
+  font-size: clamp(2.4rem, 7vw, 4.5rem);
+  font-weight: 600;
+  text-wrap: balance;
 }
 
-/* --- GRID DE RECEITAS CORRIGIDO --- */
+/* --- GRID DE RECEITAS --- */
 .recipe-grid {
   display: grid;
-  /* Por padrão em telas grandes, limitamos a no máximo 2 colunas para manter o design limpo */
-  grid-template-columns: repeat(2, 1fr);
-  gap: 25px; 
-  padding: 0 20px 50px;
-  max-width: 1100px; /* Reduzido de 1300px para os 2 cards preencherem bem a tela sem esticar */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  padding: 0 clamp(20px, 5vw, 48px) 60px;
+  max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
+}
+
+.recipe-grid > p {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--muted);
+  padding: 40px 0;
 }
 
 .recipe-card {
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 24px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
   display: flex;
+  flex-direction: column;
   overflow: hidden;
-  gap: 15px;
-  align-items: center;
-  width: 100%; /* Alterado de 90% para 100% para alinhar perfeitamente no grid */
-  height: auto;
-  padding: 24px;
+  padding: 0;
+  transition: var(--transition-default);
 }
 
 .recipe-card:hover {
-  transform: scale(1.02);
-  transition: 0.2s;
-}
-
-.ver-receita-fav {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-}
-
-.salvar_receita {
-  padding: 15px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  color: #000000;
-  background-color: rgb(255, 255, 255);
-  cursor: pointer;
-}
-
-.salvar_receita:hover {
-  transform: scale(1.02);
-  transition: 0.2s;
-}
-
-.ver_receita {
-  padding: 15px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  color: #ffffff;
-  background-color: black;
-  cursor: pointer;
-}
-
-.ver_receita:hover {
-  transform: scale(1.02);
-  transition: 0.2s;
+  transform: translateY(-6px);
+  border-color: color-mix(in srgb, var(--cat) 55%, transparent);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
 }
 
 .recipe-card__image {
-  flex: 0 0 40%;
-  height: 100%;
-  border-radius: 20px;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
 }
 
 .recipe-card__image img {
   width: 100%;
   height: 100%;
-  border-radius: 20px;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.recipe-card:hover .recipe-card__image img {
+  transform: scale(1.06);
 }
 
 .recipe-card__info {
-  padding: 10px;
-  gap: 15px; 
-  font-size: 1.1rem;
-  display: flex; 
+  padding: 20px;
+  display: flex;
   flex-direction: column;
-  justify-content: center;
-  line-height: 1.5;
+  gap: 12px;
+  flex: 1;
 }
 
-/* Fundo escuro que cobre a tela toda */
+.recipe-card__info h2 {
+  font-family: var(--font-logo);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.recipe-card__info > p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: -4px;
+}
+
+.ver-receita-fav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.ver_receita,
+.salvar_receita,
+.remover_receita {
+  padding: 13px 12px;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.ver_receita p,
+.salvar_receita p,
+.remover_receita p {
+  pointer-events: none;
+}
+
+.ver_receita {
+  color: #17130f;
+  background-color: #ffffff;
+}
+
+.salvar_receita {
+  background-color: var(--cat);
+  color: #17130f;
+}
+
+.ver_receita:hover,
+.salvar_receita:hover,
+.remover_receita:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.remover_receita {
+  background-color: #e5484d;
+  color: #fff;
+}
+
+/* --- MODAL --- */
 .modal-container {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  padding: 20px;
 }
 
-/* Caixa branca do alerta */
 .modal-conteudo {
-  background-color: white;
-  padding: 30px;
-  border-radius: 8px;
+  background: #211a15;
+  border: 1px solid var(--glass-border);
+  padding: 36px 30px;
+  border-radius: 20px;
   text-align: center;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
 }
 
 .modal-conteudo h2 {
-  margin: 15px 0 10px;
-  color: #333;
+  font-family: var(--font-logo);
+  margin: 16px 0 10px;
+  color: var(--text-white);
+  font-size: 1.6rem;
 }
 
 .modal-conteudo p {
-  color: #666;
-  margin-bottom: 20px;
+  color: var(--muted);
+  margin-bottom: 26px;
 }
 
-/* Botões do alerta */
 .modal-botoes {
   display: flex;
-  justify-content: space-around;
-  gap: 10px;
+  justify-content: center;
+  gap: 12px;
 }
 
 .modal-botoes button {
-  padding: 10px 20px;
+  padding: 12px 22px;
   border: none;
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: bold;
+  font-family: var(--font-main);
+  font-weight: 600;
+  transition: var(--transition-default);
+}
+
+.modal-botoes button:hover {
+  transform: translateY(-2px);
 }
 
 .btn-cancelar {
-  background-color: #bdc3c7;
-  color: #333;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-white);
 }
 
 .btn-confirmar {
-  background-color: #2ecc71;
-  color: white;
+  background-color: var(--primary);
+  color: #17130f;
 }
 
-/* --- RESPONSIVIDADE CORRIGIDA (ORDEM DECRESCENTE) --- */
-
-/* 1. Telas Médias e Tablets: Mantém duas colunas bem distribuídas */
-@media (max-width: 980px) {
-  .recipe-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-}
-
-/* 2. Smartphones Grandes e de Média Resolução: Transição para coluna única */
+/* --- RESPONSIVIDADE --- */
 @media (max-width: 768px) {
   .recipe-grid {
     grid-template-columns: 1fr;
-    padding: 0 15px 30px;
-  }
-
-  .recipe-card {
-    flex-direction: column; /* Imagem acima do texto */
-    align-items: center;
-  }
-
-  .recipe-card h1 {
-    font-size: 160%;
-  }
-
-  .recipe-card__image {
-    flex: 0 0 auto;
-    width: 100%;
-    height: 180px; 
   }
 
   .main-header {
-    padding-left: 70px;
+    padding-left: 72px;
+    height: 68px;
   }
-}
 
-/* 3. Celulares Pequenos: Ajuste fino de espaçamentos */
-@media (max-width: 580px) {
-  .recipe-grid {
-    grid-template-columns: 1fr;
-    padding: 0 15px 40px;
+  .logo-container img {
+    height: 40px;
+  }
+
+  .brand-name {
+    font-size: 1.35rem;
+  }
+
+  .title-section {
+    padding-top: 100px;
   }
 }

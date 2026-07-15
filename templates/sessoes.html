@@ -3,26 +3,59 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#17130f" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <link rel="stylesheet" href="/static/css/sessoes.css" />
     <link rel="shortcut icon" href="/assets/logo.png" type="image/x-icon" />
-    <title>Sessões</title>
+    <title>Categorias | KitchenHub</title>
   </head>
   <body>
+    <header class="sessoes-header">
+      <a href="index.html" class="brand">
+        <img src="/assets/logo.png" alt="Logo KitchenHub" />
+        <span>KitchenHub</span>
+      </a>
+      <nav aria-label="Navegação">
+        <a href="salvos.html"><i class="fa-regular fa-bookmark"></i> Meu livro</a>
+        <a href="iachat.html"><i class="fa-solid fa-wand-magic-sparkles"></i> Chef IA</a>
+      </nav>
+    </header>
+
+    <div class="sessoes-intro">
+      <h1>Escolha uma categoria</h1>
+      <p>Passe o mouse e clique para explorar as receitas</p>
+    </div>
+
     <main>
-      <section id="japonesa" class="card-section">
-        <span>japonesas</span>
+      <section id="japonesa" class="card-section" role="button" tabindex="0">
+        <div class="card-overlay">
+          <span>Japonesas</span>
+          <small>Sushi, temaki e mais</small>
+        </div>
       </section>
 
-      <section id="massa" class="card-section">
-        <span>massas</span>
+      <section id="massa" class="card-section" role="button" tabindex="0">
+        <div class="card-overlay">
+          <span>Massas</span>
+          <small>Clássicos italianos</small>
+        </div>
       </section>
 
-      <section id="pizza" class="card-section">
-        <span>pizzas</span>
+      <section id="pizza" class="card-section" role="button" tabindex="0">
+        <div class="card-overlay">
+          <span>Pizzas</span>
+          <small>Artesanais e saborosas</small>
+        </div>
       </section>
 
-      <section id="sobremesa" class="card-section">
-        <span>sobremesas</span>
+      <section id="sobremesa" class="card-section" role="button" tabindex="0">
+        <div class="card-overlay">
+          <span>Sobremesas</span>
+          <small>Doces irresistíveis</small>
+        </div>
       </section>
     </main>
 
